@@ -1,20 +1,10 @@
-"""
-CSA06 - Design and Analysis of Algorithms
-CO1 - Assessment Tool 1 : Scalability Audit of "ShopSphere"
 
-Implements every module (M1-M5, S1, S2), counts basic operations by actually
-executing the algorithms, checks the counts against the derived closed forms,
-and produces the scalability table for n = 1,000,000.
-
-Assumption (given in the question): the servers execute 10^8 basic ops / second.
-Run :  python shopsphere_audit.py
-"""
 import math
 import os
 import random
 
 OPS_PER_SEC = 10 ** 8
-WINDOW_SEC = 10 * 60            # nightly processing window = 10 minutes
+WINDOW_SEC = 10 * 60            
 WINDOW_OPS = OPS_PER_SEC * WINDOW_SEC
 
 
