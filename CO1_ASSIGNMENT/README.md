@@ -1,6 +1,6 @@
 # CO1 Assignment - Efficient Search Strategy for a Large-Scale Student Record System
 
-**Course:** CSA06 Design and Analysis of Algorithms  |  **Student:** RITHIKA G  |  **Register No.:** _fill in_
+**Course:** CSA06 Design and Analysis of Algorithms  |  **Student:** RITHIKA G  |  **Register No.:** 192571027
 
 ## 1. Project overview
 A university stores student records identified by a unique registration number. The database grows from 1,000 to 1,000,000+ records and the system must decide whether a registration number exists and return its position. This project designs, analyses (mathematically), implements and experimentally compares **three different algorithmic strategies**, recommends one, and then re-evaluates the design for the **Day-4 challenge: 50,000 searches per hour on 1,000,000 records with new records added once per day**.
