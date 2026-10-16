@@ -1,4 +1,4 @@
-# Task 12 - Day-4 Design Challenge 
+# Task 12 -  Design Challenge 
 
 **Changed requirement:** 50,000 search requests per hour = 13.9 requests per second = 1,200,000 per day on a database of 1,000,000 records, with new records added **once per day**. **Decision: MODIFY** - the sorted-array design is kept as the ordered master copy, but exact-match lookups are redesigned to use a hash index that is rebuilt/extended in a nightly batch.
 
