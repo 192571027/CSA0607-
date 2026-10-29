@@ -1,0 +1,66 @@
+==============================================================================
+Q4  BRUTE-FORCE CLOSEST PAIR - DRONE COLLISION-RISK MONITORING
+==============================================================================
+
+DERIVATION  number of unique candidate pairs for n drones
+  Drone 1 is paired with n-1 others; drone 2 with the n-2 NOT already paired
+  with it (j>i); ... drone n-1 with 1; drone n with none:
+        (n-1) + (n-2) + ... + 1 = n(n-1)/2
+  Equivalently C(n,2) = n!/(2!(n-2)!).  Counting ordered pairs would give
+  n(n-1), i.e. every pair twice.  Growth is Theta(n^2): the pair count
+  multiplies by ~4 whenever n doubles.
+
+CORRECTNESS CHECK against an independent itertools.combinations minimum
+  n=   2  closest pair (0,1)  distance=4178.9039   matches reference: True
+  n=   3  closest pair (0,1)  distance=2408.7645   matches reference: True
+  n=  10  closest pair (7,9)  distance=858.1480   matches reference: True
+  n=  50  closest pair (33,44)  distance=162.5568   matches reference: True
+  n= 200  closest pair (89,135)  distance=47.9052   matches reference: True
+
+DUPLICATE-PAIR AVOIDANCE (n=1000): ordered scan i!=j examines 999000 pairs; unique scan examines 499500
+
+EXPERIMENT: random drone positions in a 10,000 x 10,000 m airspace
+      n |  pairs exam.  dist. calcs     n(n-1)/2 equal |  time (s) |  t/t_prev | closest dist (m)
+    100 |         4950         4950         4950  True |    0.0006 |           | 71.901
+    250 |        31125        31125        31125  True |    0.0029 |      4.46 | 12.890
+    500 |       124750       124750       124750  True |    0.0120 |      4.18 | 12.358
+   1000 |       499500       499500       499500  True |    0.0503 |      4.18 | 0.320
+   2000 |      1999000      1999000      1999000  True |    0.2009 |      3.99 | 3.127
+   4000 |      7998000      7998000      7998000  True |    0.8440 |      4.20 | 2.006
+   8000 |     31996000     31996000     31996000  True |    3.5835 |      4.25 | 0.839
+
+THEORY vs EXPERIMENT (growth)
+      n ->      2n | pairs multiplier (theory 4 for x2) | time multiplier
+    250 ->     500 |  4.008                           |  4.174
+    500 ->    1000 |  4.004                           |  4.184
+   1000 ->    2000 |  4.002                           |  3.995
+   2000 ->    4000 |  4.001                           |  4.201
+   4000 ->    8000 |  4.001                           |  4.246
+  fitted model  t(n) = c*n^2  with c = 5.578e-08 s/n^2     (log-log slope of measured time = 1.990)
+  average cost per candidate pair = 0.110 microseconds
+
+ACCEPTABLE RESPONSE TIME (my definition): the collision check must finish within ONE position-report
+interval, assumed 1.0 s, otherwise results are stale before they are shown.
+  Largest n with t(n) <= 1.0 s  ->  n_max ~ sqrt(1.0/c) = 4234 drones (this environment)
+          n |            pairs | predicted time | verdict
+       1000 |           499500 |         0.06 s | acceptable
+       2000 |          1999000 |         0.22 s | acceptable
+       5000 |         12497500 |         1.39 s | IMPRACTICAL
+       8000 |         31996000 |         3.57 s | IMPRACTICAL
+      10000 |         49995000 |         5.58 s | IMPRACTICAL
+      20000 |        199990000 |        22.31 s | IMPRACTICAL
+      50000 |       1249975000 |       139.45 s | IMPRACTICAL
+     100000 |       4999950000 |       557.80 s | IMPRACTICAL
+  (a compiled implementation ~50x faster would only raise n_max by ~sqrt(50) = 7x -> ~29638)
+
+WHERE DOES THE INEFFICIENCY ORIGINATE?
+  Every pair is examined, although a pair can only matter if its two drones are
+  CLOSE.  Almost all pairs are far apart and can never be the answer, yet each
+  costs one full distance evaluation.  The algorithm uses no information about
+  the geometry (nearness, ordering) of the data and never reuses what one
+  comparison tells it about others (e.g. 'A and B are far apart' says nothing
+  to the algorithm about C, which is also far from B).  A redesigned strategy
+  must avoid comparing pairs that cannot beat the current best distance, e.g.
+  by ordering/partitioning the drones spatially so that only neighbours are
+  compared (this is the Q7 redesign).
+

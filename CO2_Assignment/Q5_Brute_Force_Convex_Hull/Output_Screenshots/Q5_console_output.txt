@@ -1,0 +1,97 @@
+==============================================================================
+Q5  BRUTE-FORCE CONVEX HULL - WILDLIFE RESERVE BOUNDARY MONITORING
+==============================================================================
+
+ 1. Two points define a line.  For Pi=(x1,y1), Pj=(x2,y2) the line is
+        a*x + b*y = c   with a = y2-y1, b = x1-x2, c = x1*y2 - y1*x2
+ 2. Side of a third point Pk=(x,y): s(Pk) = a*x + b*y - c.
+        s > 0  one side (the LEFT of the directed line Pi->Pj),
+        s < 0  the other side (the right),
+        s = 0  Pk is ON the line.
+    (s is the cross product (Pj-Pi) x (Pk-Pi); integer inputs -> exact test.)
+ 3. Examine every other point.  PiPj is a hull edge iff the non-zero values of
+    s all have the SAME sign, and every point with s = 0 lies inside the
+    segment PiPj (so collinear points in the middle of an edge are not
+    reported as corners).
+ 4. Build boundary: if all s > 0 the edge, directed Pi->Pj, has the whole set to
+    its left, i.e. it is a counter-clockwise hull edge; store succ[Pi]=Pj.  If
+    all s < 0 use Pj->Pi.  Follow succ[] from any vertex to read the polygon.
+
+
+------------------------------------------------------------------------------
+T1 mixed: 6 boundary + 14 interior stations
+  distinct points n=19   hull vertices h=6   hull edges found=6
+  hull (CCW): [(-3, 6), (0, 0), (10, 0), (12, 6), (8, 12), (2, 11)]
+  matches independent reference hull: True
+  side tests: with early exit=1088   without early exit=2907   n(n-1)(n-2)/2=2907
+------------------------------------------------------------------------------
+T2 CHALLENGE: collinear points on edges, duplicates, interior diagonal
+  distinct points n=13   hull vertices h=4   hull edges found=4
+  hull (CCW): [(0, 0), (8, 0), (8, 8), (0, 8)]
+  matches independent reference hull: True
+  side tests: with early exit=381   without early exit=858   n(n-1)(n-2)/2=858
+------------------------------------------------------------------------------
+T3 DEGENERATE: all stations collinear
+  distinct points n=8   hull vertices h=2   hull edges found=1
+  hull (CCW): [(0, 1), (7, 15)]
+  matches independent reference hull: True
+  side tests: with early exit=48   without early exit=168   n(n-1)(n-2)/2=168
+------------------------------------------------------------------------------
+T4 WORST CASE: 16 stations on a circle (all are hull vertices)
+  distinct points n=16   hull vertices h=16   hull edges found=16
+  hull (CCW): [(-100, 0), (-92, -38), (-71, -71), (-38, -92), (0, -100), (38, -92), (71, -71), (92, -38), (100, 0), (92, 38), (71, 71), (38, 92), (0, 100), (-38, 92), (-71, 71), (-92, 38)]
+  matches independent reference hull: True
+  side tests: with early exit=874   without early exit=1680   n(n-1)(n-2)/2=1680
+------------------------------------------------------------------------------
+RANDOMISED VALIDATION: 300 random sets on a 13x13 grid (many ties/collinear) -> mismatches = 0
+
+GROWTH OF COMPUTATIONAL WORK  (random points, uniform in a square)
+     n | hull h | tests(early) |  tests(full) | n(n-1)(n-2)/2 |  full/th |   time s
+    10 |      6 |          209 |          360 |          360 |    1.000 | 0.000/0.000
+    20 |      6 |         1331 |         3420 |         3420 |    1.000 | 0.000/0.001
+    40 |     11 |         9437 |        29640 |        29640 |    1.000 | 0.002/0.009
+    80 |      9 |        58592 |       246480 |       246480 |    1.000 | 0.015/0.059
+   160 |     17 |       451997 |      2009760 |      2009760 |    1.000 | 0.102/0.510
+   320 |     13 |      3272936 |     16230720 |     16230720 |    1.000 | 0.794/4.164
+  n  10 ->  20 : tests x6.37 (early exit)   x9.50 (full; theory x8)
+  n  20 ->  40 : tests x7.09 (early exit)   x8.67 (full; theory x8)
+  n  40 ->  80 : tests x6.21 (early exit)   x8.32 (full; theory x8)
+  n  80 -> 160 : tests x7.71 (early exit)   x8.15 (full; theory x8)
+  n 160 -> 320 : tests x7.24 (early exit)   x8.08 (full; theory x8)
+  log-log slope of work: full = 3.08 ; early exit = 2.79
+  PREDICTION CHECK: I predicted early exit would behave close to n^2 for random points.
+  Observed slope 2.79 => prediction NOT supported; early exit lowers the constant (about 5x fewer
+  tests at n=320) but the growth stays close to cubic.  Hypothesis: points are scanned in x-sorted
+  order, so neighbouring points tend to lie on the same side of a line and a 'second side' is found late.
+  Test of hypothesis: same random sets, but 'other points' scanned in RANDOM order:
+    n=  10  tests sorted-scan=      208   random-scan=      154   (1.4x fewer)
+    n=  20  tests sorted-scan=     1356   random-scan=      925   (1.5x fewer)
+    n=  40  tests sorted-scan=     8648   random-scan=     3002   (2.9x fewer)
+    n=  80  tests sorted-scan=    60080   random-scan=    11874   (5.1x fewer)
+    n= 160  tests sorted-scan=   451213   random-scan=    95117   (4.7x fewer)
+    n= 320  tests sorted-scan=  3377844   random-scan=   261732   (12.9x fewer)
+    log-log slope with random scan order = 2.15
+
+WORST-CASE FAMILY for the early-exit version: n points on a circle (every point is a hull vertex)
+  n=  10 hull=  10 tests(early)=      227  n(n-1)(n-2)/2=      360  ratio 0.631
+  n=  20 hull=  20 tests(early)=     1652  n(n-1)(n-2)/2=     3420  ratio 0.483
+  n=  40 hull=  40 tests(early)=    12102  n(n-1)(n-2)/2=    29640  ratio 0.408
+  n=  80 hull=  80 tests(early)=    91402  n(n-1)(n-2)/2=   246480  ratio 0.371
+  n= 160 hull= 160 tests(early)=   707602  n(n-1)(n-2)/2=  2009760  ratio 0.352
+
+CORRECTNESS ARGUMENT (geometric reasoning)
+ Let H be the half-plane bounded by the line L through Pi and Pj that contains
+ every other point (accepted edge => all s have the same sign or are 0).
+ (a) A half-plane is convex, so it contains the convex hull of the whole set.
+     Hence the hull lies entirely on one side of L.
+ (b) Pi and Pj are points of the set, so they lie on L and belong to the hull;
+     the hull is convex so the segment PiPj also lies in the hull.
+ (c) A point of the hull that lies on a line that supports the hull (touches it
+     with the whole hull on one side) cannot be an interior point: any
+     neighbourhood of it would contain points on the empty side of L.  So
+     PiPj lies on the boundary.  Conversely every hull edge lies on a
+     supporting line, so such a pair passes the test: no edge is missed.
+ If some Pk were on the other side, a segment from Pk to a point beyond L would
+ cross L inside the hull, so PiPj would pass through the interior and could not
+ be boundary - the test rejects exactly those pairs.
+

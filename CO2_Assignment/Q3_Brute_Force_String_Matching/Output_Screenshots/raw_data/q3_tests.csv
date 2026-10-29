@@ -1,0 +1,5 @@
+test,n,m,predicted_comparisons,observed_comparisons,matches_found
+"T1 BEST-LIKE  : text a^n, pattern 'Xerror!!' (first char never in text)",10000,8,9993,9993,0
+"T2 ENGINEERED : text A^n, pattern A^(m-1)B  (repeated partial matches)",10000,8,79944,79944,0
+"T3 OWN CHOICE : realistic synthetic log, signature 'password'",10000,8,10155.2,10302,25
+T4 EXTRA      : pattern equals first m chars of the text (match at start),10000,8,8,8,1
