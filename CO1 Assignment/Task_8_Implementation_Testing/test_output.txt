@@ -1,0 +1,17 @@
+test_absent_below_between_above (__main__.TestSearch.test_absent_below_between_above) ... ok
+test_all_present_keys (__main__.TestSearch.test_all_present_keys) ... ok
+test_binary_worst_case_bound (__main__.TestSearch.test_binary_worst_case_bound) ... ok
+test_counted_agree (__main__.TestSearch.test_counted_agree) ... ok
+test_empty (__main__.TestSearch.test_empty) ... ok
+test_first_and_last (__main__.TestSearch.test_first_and_last) ... ok
+test_hash_insert (__main__.TestSearch.test_hash_insert) ... ok
+test_large_random_agreement (__main__.TestSearch.test_large_random_agreement) ... ok
+test_linear_counts (__main__.TestSearch.test_linear_counts) ... ok
+test_merge_sort_matches_builtin (__main__.TestSearch.test_merge_sort_matches_builtin) ... ok
+test_merge_sorted (__main__.TestSearch.test_merge_sorted) ... ok
+test_single_element (__main__.TestSearch.test_single_element) ... ok
+
+----------------------------------------------------------------------
+Ran 12 tests in 0.476s
+
+OK

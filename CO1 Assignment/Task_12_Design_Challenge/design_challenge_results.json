@@ -1,0 +1,58 @@
+{
+  "n": 1000000,
+  "requests_per_hour": 50000,
+  "requests_per_second": 13.88888888888889,
+  "requests_per_day": 1200000,
+  "new_records_per_day": 2000,
+  "sort_s": 2.620721240000023,
+  "hash_build_s": 1.478302632000009,
+  "binary": {
+    "queries_run": 50000,
+    "total_s": 0.21333322000003818,
+    "mean_us": 4.08060694,
+    "p50_us": 3.804,
+    "p99_us": 9.476,
+    "max_us": 437.889,
+    "hour_s": 0.21333322000003818,
+    "cpu_utilisation_pct": 0.005925922777778838
+  },
+  "hash": {
+    "queries_run": 50000,
+    "total_s": 0.09637348399996881,
+    "mean_us": 1.60024152,
+    "p50_us": 1.308,
+    "p99_us": 3.379,
+    "max_us": 1417.069,
+    "hour_s": 0.09637348399996881,
+    "cpu_utilisation_pct": 0.0026770412222213557
+  },
+  "linear": {
+    "queries_run": 300,
+    "total_s": 4.4854164779999905,
+    "mean_us": 14949.755776666667,
+    "p50_us": 15563.098,
+    "p99_us": 32918.654,
+    "max_us": 33474.327,
+    "extrapolated_hour_s": 747.4877888333334,
+    "note": "measured on 300 queries, extrapolated linearly to 50000",
+    "hour_s": 747.4877888333334,
+    "cpu_utilisation_pct": 20.763549689814816
+  },
+  "daily_update": {
+    "resort_full_mergesort_s": 2.764141341000027,
+    "resort_full_timsort_s": 0.2804997609999873,
+    "sort_k_then_merge_s": 0.23561867700004768,
+    "hash_incremental_insert_s": 0.00668248599998833,
+    "hash_full_rebuild_s": 1.5846111650000125
+  },
+  "break_even": {
+    "linear_mean_us": 12245.884767999827,
+    "binary_mean_us": 4.08060694,
+    "hash_mean_us": 1.60024152,
+    "searches_to_amortise_sort": 214.07965733811704,
+    "searches_to_amortise_hash": 120.73409669654369,
+    "hash_vs_binary_breakeven": -1.142418608000014,
+    "per_search_prep_overhead_us_binary": 2.1839343666666857,
+    "per_search_prep_overhead_us_hash": 1.2319188600000075
+  }
+}
