@@ -1,0 +1,89 @@
+==============================================================================
+Q1  SORTING UNDER DIFFERENT DATA CONDITIONS   (n = 1000 orders)
+==============================================================================
+
+PREDICTIONS (derived from the algorithms' structure, BEFORE running them)
+ Selection : comparisons = n(n-1)/2 for EVERY input (scan of unsorted part
+             never stops early); moves <= n-1 (one swap per pass at most).
+ Bubble    : moves = #inversions; passes = 1 + max(#larger elements to the left
+             of any element) because an element moves left only ONE place per
+             pass.  Sorted input -> n-1 comparisons (early-exit flag).
+ Insertion : shifts = #inversions; comparisons = inversions + (n-1) - z where z
+             = elements smaller than every earlier element.  Sorted -> n-1.
+ D1 (5% new orders appended): few inversions overall but each appended order
+             may have to travel far LEFT.  Insertion should be cheap (about
+             k*n/2 shifts); Bubble suffers (one pass per position travelled);
+             Selection unchanged at n(n-1)/2.
+ D2 (reverse): worst case for Bubble and Insertion (n(n-1)/2 moves).
+ D3 (all equal): no inversions -> Bubble & Insertion n-1 comparisons, 0 moves;
+             Selection still n(n-1)/2 comparisons, 0 swaps.
+
+------------------------------------------------------------------------------
+D0 Random (baseline)
+  inversions (independent count) = 254248, predicted bubble passes = 950
+  Algorithm   Comparisons        Moves  Predicted C   Time ms  Stable
+  Selection        499500          992       499500     24.73   False  OK
+  Bubble           498275       254248       498275     49.90    True  OK
+  Insertion        255239       254248       255239     22.73    True  OK
+  Bubble passes observed = 950 (predicted 950)
+------------------------------------------------------------------------------
+D0b Already sorted (baseline)
+  inversions (independent count) = 0, predicted bubble passes = 1
+  Algorithm   Comparisons        Moves  Predicted C   Time ms  Stable
+  Selection        499500            0       499500     23.87    True  OK
+  Bubble              999            0          999      0.05    True  OK
+  Insertion           999            0          999      0.09    True  OK
+  Bubble passes observed = 1 (predicted 1)
+------------------------------------------------------------------------------
+D1 Nearly sorted: 95% ordered + 5% new batch appended
+  inversions (independent count) = 24758, predicted bubble passes = 984
+  Algorithm   Comparisons        Moves  Predicted C   Time ms  Stable
+  Selection        499500          994       499500     24.22   False  OK
+  Bubble           499380        24758       499380     29.35    True  OK
+  Insertion         25757        24758        25757      2.36    True  OK
+  Bubble passes observed = 984 (predicted 984)
+------------------------------------------------------------------------------
+D1b Nearly sorted: 5% locally displaced
+  inversions (independent count) = 205, predicted bubble passes = 7
+  Algorithm   Comparisons        Moves  Predicted C   Time ms  Stable
+  Selection        499500           48       499500     24.50   False  OK
+  Bubble             6972          205         6972      0.40    True  OK
+  Insertion          1203          205         1203      0.10    True  OK
+  Bubble passes observed = 7 (predicted 7)
+------------------------------------------------------------------------------
+D2 Reverse sorted (significantly disordered)
+  inversions (independent count) = 499442, predicted bubble passes = 999
+  Algorithm   Comparisons        Moves  Predicted C   Time ms  Stable
+  Selection        499500          525       499500     25.23   False  OK
+  Bubble           499500       499442       499500     61.34    True  OK
+  Insertion        499498       499442       499498     44.64    True  OK
+  Bubble passes observed = 999 (predicted 999)
+------------------------------------------------------------------------------
+D3 EDGE CASE: all priorities identical
+  inversions (independent count) = 0, predicted bubble passes = 1
+  Algorithm   Comparisons        Moves  Predicted C   Time ms  Stable
+  Selection        499500            0       499500     24.11    True  OK
+  Bubble              999            0          999      0.06    True  OK
+  Insertion           999            0          999      0.08    True  OK
+  Bubble passes observed = 1 (predicted 1)
+------------------------------------------------------------------------------
+STABILITY TEST: 1000 orders with only 5 distinct priority levels
+  Selection  sorted=True stable=False
+  Bubble     sorted=True stable=True
+  Insertion  sorted=True stable=True
+==============================================================================
+SCALING  - fulfilment-centre scenario: 95% ordered + 5% new batch appended
+==============================================================================
+     n | Selection comps / moves    | Bubble comps / moves       | Insertion comps / moves   
+   250 |        31125 / 233         |        31020 / 1021        |         1270 / 1021       
+   500 |       124750 / 477         |       124189 / 4938        |         5437 / 4938       
+  1000 |       499500 / 975         |       498275 / 26315       |        27314 / 26315      
+  2000 |      1999000 / 1985        |      1998895 / 95938       |        97937 / 95938      
+  3000 |      4498500 / 2982        |      4494314 / 220196      |       223195 / 220196     
+
+Timing (ms, best of 3) for the same runs:
+  n=  250  Selection      1.26  Bubble      1.45  Insertion      0.09
+  n=  500  Selection      5.89  Bubble      6.51  Insertion      0.47
+  n= 1000  Selection     24.44  Bubble     29.01  Insertion      2.55
+  n= 2000  Selection    100.85  Bubble    118.87  Insertion      9.13
+  n= 3000  Selection    226.47  Bubble    290.71  Insertion     21.12

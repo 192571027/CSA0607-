@@ -1,0 +1,146 @@
+ShopSphere Scalability Audit  -  CSA06 CO1 AT1
+
+==============================================================================
+PART (b)  Iterative modules M1 and M2 : measured vs. derived counts
+==============================================================================
+M1: comparisons = n(n-1)/2
+       n       measured        formula  match
+       5             10             10  True
+      10             45             45  True
+     100           4950           4950  True
+     500         124750         124750  True
+    1000         499500         499500  True
+Duplicate demo (rows 0 and 2 are the same title+seller): flagged -> [2]
+
+M2: Audit operations = 2^ceil(log2 n) - 1
+         n     measured      formula       n log2 n  match
+         2            1            1              2  True
+         3            3            3              5  True
+         8            7            7             24  True
+       100          127          127            664  True
+      1000         1023         1023           9966  True
+      1024         1023         1023          10240  True
+      1025         2047         2047          10251  True
+    100000       131071       131071        1660964  True
+
+Verification n=1024: outer iterations = 10 (i = 1,2,...,512), Audit ops = 1023  (= 2^10 - 1 = 1023)
+Ratio audits/n for growing n (stays between 1 and 2 -> Theta(n)):
+   n=    1000: audits=    1023  audits/n=1.023
+   n=   10000: audits=   16383  audits/n=1.638
+   n=  100000: audits=  131071  audits/n=1.311
+   n= 1000000: audits= 1048575  audits/n=1.049
+
+==============================================================================
+PART (c)  Recurrence for S2 : T(n)=T(n/2)+1, T(1)=1
+==============================================================================
+         n  T(n) recurrence   1+log2 n  match
+         1                1          1  True
+         2                2          2  True
+        16                5          5  True
+      1024               11         11  True
+   1048576               21         21  True
+
+n=1023: worst-case comparisons (iterative) = 10; recursion depth (stack frames) = 10
+Space: iterative O(1) (lo, hi, mid) ; recursive O(log n) call stack
+
+==============================================================================
+PART (d)  Master theorem : M4 and M5
+==============================================================================
+M4 current : T(n)=4T(n/2)+n   a=4 b=2 f=n   n^log2(4)=n^2  -> Case 1 -> Theta(n^2)
+M4 redesign: T(n)=2T(n/2)+n   a=2 b=2 f=n   n^log2(2)=n    -> Case 2 -> Theta(n log n)
+
+         n            T_cur           2n^2-n          T_new     n(log n+1)
+        16              496              496             80             80
+       256           130816           130816           2304           2304
+      4096         33550336         33550336          53248          53248
+     65536       8589869056       8589869056        1114112        1114112
+
+Effect of doubling the data (ratio T(2n)/T(n)):
+         n    current   redesign
+      1024      4.001      2.182
+     16384      4.000      2.133
+    262144      4.000      2.105
+   1048576      4.000      2.095
+
+M5: T(n)=2T(n/2)+n log n   a=2 b=2  n^log_b a = n   f(n)=n log n
+   Case 1 fails (f is bigger than n), Case 2 (k=0) fails (extra log),
+   Case 3 fails (n log n is NOT Omega(n^(1+eps))). Extended MT, k=1 -> Theta(n log^2 n)
+
+         n             T_m5     n+n*L(L+1)/2  T/(n log^2 n)
+        16            176.0            176.0          0.688
+       256           9472.0           9472.0          0.578
+      4096         323584.0         323584.0          0.549
+     65536        8978432.0        8978432.0          0.535
+   1048576      221249536.0      221249536.0          0.527
+
+==============================================================================
+PART (e)  Best / average / worst cases of S1 and S2
+==============================================================================
+n = 1,000,000
+S1 best  (key at index 0)     :         1 comparisons
+S1 worst (key last / absent)  : 1,000,000 / 1,000,000 comparisons
+S1 average, successful search : (n+1)/2 = 500,000.5
+S1 average, unsuccessful      : n = 1,000,000
+
+S1 average A(n,p) = p(n+1)/2 + (1-p)n
+   p=0.0 : A =   1,000,000.00
+   p=0.25: A =     875,000.12
+   p=0.5 : A =     750,000.25
+   p=0.75: A =     625,000.38
+   p=1.0 : A =     500,000.50
+
+>>> n=1,000,000, p=0.5  ->  A = 750,000.25 comparisons
+Monte-Carlo check (n=2000, p=0.5, 60000 trials): measured 1,501.6  vs  formula 1,500.2
+
+S2 (binary search) on sorted index, n = 1,000,000
+S2 best  (key = middle element): 1 comparison
+S2 average (successful, all keys): 18.951 comparisons
+S2 worst : 20 comparisons   (floor(log2 n)+1 = 20)
+S2 unsuccessful search           : 19 comparisons
+
+==============================================================================
+PART (f)  f(n)=3n^2+10n log2 n+50  is Theta(n^2)
+==============================================================================
+constants c1=3, c2=63, n0=1: c1 n^2 <= f(n) <= c2 n^2 for 1<=n<=20000 : True
+tighter pair c1=3, c2=4, n0=60                                               : True   (n=59 fails: f=13963.8 > 4n^2=13924)
+
+       n               f(n)   f(n)/n^2           f(n)/n
+      10              682.2     6.8219             68.2
+     100           36,693.9     3.6694            366.9
+    1000        3,099,707.8     3.0997          3,099.7
+   10000      301,328,821.2     3.0133         30,132.9
+  100000   30,016,609,690.5     3.0017        300,166.1
+ 1000000 3,000,199,315,735.7     3.0002      3,000,199.3
+f(n)/n^2 -> 3 (bounded)  => Theta(n^2);  f(n)/n -> infinity => f(n) is not O(n)
+Disproof of O(n): for any c, n > c/3 gives f(n) >= 3n^2 > c n.
+   c=      10: n=       4 -> f(n)=178 > c*n=40  : True
+   c=    1000: n=     334 -> f(n)=362,720 > c*n=334,000  : True
+   c= 1000000: n=  333334 -> f(n)=333,395,822,203 > c*n=333,334,000,000  : True
+
+==============================================================================
+PART (g)  Scalability decision  (10^8 ops/s, window = 10 min = 6x10^10 ops)
+==============================================================================
+n = 1,000,000   window budget = 60,000,000,000 operations
+
+Module                        Complexity                  Operations        Time  Verdict
+--------------------------------------------------------------------------------------------
+M1 Duplicate detector         Theta(n^2)             499,999,500,000    83.3 min  FAIL
+M2 Rate limiter               Theta(n)                     1,048,575    10.49 ms  PASS
+S2 Binary search (1 query)    Theta(log n)                        20     0.20 us  PASS
+M4 Recommender - current      Theta(n^2)           1,999,999,000,000      5.56 h  FAIL
+M4 Recommender - redesign     Theta(n log n)              20,931,569   209.32 ms  PASS
+M5 Sales analytics            Theta(n log^2 n)           209,599,497      2.10 s  PASS
+Report generator f(n)         Theta(n^2)           3,000,199,315,736      8.33 h  FAIL
+
+Growth when the catalogue grows 100,000 -> 1,000,000 (10x):
+Module                                  ops @1e5          ops @1e6    ratio
+M1                                 4,999,950,000   499,999,500,000    100.0
+M2                                       131,071         1,048,575      8.0
+M4 current                        19,999,900,000 1,999,999,000,000    100.0
+M4 redesign                            1,760,964        20,931,569     11.9
+M5                                    14,724,490       209,599,497     14.2
+Report f(n)                       30,016,609,690 3,000,199,315,736    100.0
+
+Redesign estimate for M1 (sort by (title,seller) key, then scan neighbours):
+   ~ n log2 n + n = 20,931,569 ops = 209.32 ms  (hash-set variant: ~n ops, Theta(n) expected)
+chart saved -> /home/claude/CO1_AT1/Question_1/Source_Code/../Supporting_Files/growth_chart.png

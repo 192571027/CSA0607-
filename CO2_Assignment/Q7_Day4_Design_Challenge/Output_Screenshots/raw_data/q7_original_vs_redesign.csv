@@ -1,0 +1,24 @@
+dataset,n,brute_dist_calcs,R1_sort_comparisons,R1_gap_checks,R1_dist_calcs,R1_reduction_pct,R2_cell_lookups,R2_dist_calcs,R2_max_cell_occupancy,t_brute_s,t_R1_s,t_R2_s
+U  uniform random in 10 km x 10 km (same data as Q4),100,4950,927,297,199,95.98,900,478,5,0.00039,6e-05,0.00033
+U  uniform random in 10 km x 10 km (same data as Q4),250,31125,2650,671,422,98.644,2250,1271,4,0.00241,0.00014,0.00078
+U  uniform random in 10 km x 10 km (same data as Q4),500,124750,5827,1223,727,99.417,4500,2613,4,0.01029,0.00028,0.00169
+U  uniform random in 10 km x 10 km (same data as Q4),1000,499500,12628,1374,375,99.925,9000,5336,7,0.04228,0.00044,0.00354
+U  uniform random in 10 km x 10 km (same data as Q4),2000,1999000,27291,5212,3214,99.839,18000,10593,6,0.17013,0.00133,0.00689
+U  uniform random in 10 km x 10 km (same data as Q4),4000,7998000,58512,8010,4013,99.95,36000,21657,6,0.71119,0.00238,0.0143
+U  uniform random in 10 km x 10 km (same data as Q4),8000,31996000,125113,16673,8674,99.973,72000,43204,7,2.87544,0.0081,0.03196
+"C  clustered (5 Gaussian clusters, sigma=150 m)",500,124750,5819,735,236,99.811,5020,22874,51,0.01093,0.0002,0.00407
+"C  clustered (5 Gaussian clusters, sigma=150 m)",1000,499500,12637,1516,517,99.896,9112,68004,49,0.04403,0.00048,0.0105
+"C  clustered (5 Gaussian clusters, sigma=150 m)",2000,1999000,27269,3191,1192,99.94,19512,151697,44,0.17835,0.00102,0.02413
+"C  clustered (5 Gaussian clusters, sigma=150 m)",4000,7998000,58506,8073,4074,99.949,37512,525548,74,0.71294,0.00241,0.09302
+V corridor fixed-x,500,124750,3823,18979,18503,85.168,,,,,,
+V corridor widest-axis,500,124750,5820,511,12,99.99,,,,,,
+V corridor fixed-x,1000,499500,8615,177654,176709,64.623,,,,,,
+V corridor widest-axis,1000,499500,12623,1016,17,99.997,,,,,,
+V corridor fixed-x,2000,1999000,19240,257814,255873,87.2,,,,,,
+V corridor widest-axis,2000,1999000,27284,2023,24,99.999,,,,,,
+V corridor fixed-x,4000,7998000,42549,597102,593180,92.583,,,,,,
+V corridor widest-axis,4000,7998000,58538,4054,55,99.999,,,,,,
+W two parallel lines,500,124750,4347,62500,62250,50.1,8716,12145,22,,,
+W two parallel lines,1000,499500,8753,250000,249500,50.05,17272,34615,31,,,
+W two parallel lines,2000,1999000,17571,1000000,999000,50.025,34632,97190,45,,,
+W two parallel lines,4000,7998000,35212,4000000,3998000,50.013,68752,272339,63,,,
