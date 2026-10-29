@@ -1,5 +1,0 @@
-test,n,hull_vertices,side_tests_early_exit,side_tests_full,n(n-1)(n-2)/2
-T1 mixed: 6 boundary + 14 interior stations,19,6,1088,2907,2907
-"T2 CHALLENGE: collinear points on edges, duplicates, interior diagonal",13,4,381,858,858
-T3 DEGENERATE: all stations collinear,8,2,48,168,168
-T4 WORST CASE: 16 stations on a circle (all are hull vertices),16,16,874,1680,1680
