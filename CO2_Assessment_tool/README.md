@@ -1,7 +1,7 @@
 # CO2 – Debugging and Optimisation: SentinelOps SOC Alert-Triage Module
 
 **Course:** CSA06 – Design and Analysis of Algorithms  **Assessment:** CO2 (50 marks)  
-**Student:** `<Name / Reg. No.>`  **Repository:** `https://github.com/<your-username>/CO2_Debugging_Optimisation`
+**Student:** `<Name / Reg. No.>` RITHIKA.G(192571027)
 
 A junior developer's Python module sorts SOC alerts, checks a blocklist, scans logs for attack
 signatures and finds the closest pair of login locations. It failed in production. This repository
