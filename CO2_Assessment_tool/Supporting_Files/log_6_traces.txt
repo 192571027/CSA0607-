@@ -1,0 +1,45 @@
+INSERTION TRACE - ORIGINAL (j > 0 ; alerts[j] = key)
+  start            [A1:3, A2:9, A3:5, A4:9, A5:1]
+  i=1 key=A2:9 shifts=0 j_end= 0 -> write at index 0  [A2:9, A2:9, A3:5, A4:9, A5:1]
+  i=2 key=A3:5 shifts=0 j_end= 1 -> write at index 1  [A2:9, A3:5, A3:5, A4:9, A5:1]
+  i=3 key=A4:9 shifts=2 j_end= 0 -> write at index 0  [A4:9, A3:5, A3:5, A3:5, A5:1]
+  i=4 key=A5:1 shifts=0 j_end= 3 -> write at index 3  [A4:9, A3:5, A3:5, A5:1, A5:1]
+
+INSERTION TRACE - CORRECTED (j >= 0 ; alerts[j+1] = key)
+  start            [A1:3, A2:9, A3:5, A4:9, A5:1]
+  i=1 key=A2:9 shifts=1 j_end=-1 -> write at index 0  [A2:9, A1:3, A3:5, A4:9, A5:1]
+  i=2 key=A3:5 shifts=1 j_end= 0 -> write at index 1  [A2:9, A3:5, A1:3, A4:9, A5:1]
+  i=3 key=A4:9 shifts=2 j_end= 0 -> write at index 1  [A2:9, A4:9, A3:5, A1:3, A5:1]
+  i=4 key=A5:1 shifts=0 j_end= 3 -> write at index 4  [A2:9, A4:9, A3:5, A1:3, A5:1]
+
+ALIGNMENT TABLE  log='FAILFAIXFAIL' (n=12) pattern='FAIL' (m=4)
+  i  window  char compares (log vs pattern)       original(range(8))  corrected(range(9))
+  0  FAIL    F=F A=A I=I L=L                    HIT                 HIT
+  1  AILF    A!F                                no hit              no hit
+  2  ILFA    I!F                                no hit              no hit
+  3  LFAI    L!F                                no hit              no hit
+  4  FAIX    F=F A=A I=I X!L                    HIT                 no hit  <-- FALSE HIT
+  5  AIXF    A!F                                no hit              no hit
+  6  IXFA    I!F                                no hit              no hit
+  7  XFAI    X!F                                no hit              no hit
+  8  FAIL    F=F A=A I=I L=L                    not scanned         HIT  <-- MISSED
+
+CLOSEST_LOGINS pair table (d in km)
+  pair  points                      d
+  (0,1)    (2, 3) (12, 30)    28.7924  <- new minimum
+  (0,2)    (2, 3) (40, 50)    60.4401
+  (0,3)    (2, 3)   (5, 1)     3.6056  <- new minimum
+  (0,4)    (2, 3) (12, 10)    12.2066
+  (0,5)    (2, 3)   (3, 4)     1.4142  <- new minimum
+  (1,2)  (12, 30) (40, 50)    34.4093
+  (1,3)  (12, 30)   (5, 1)    29.8329
+  (1,4)  (12, 30) (12, 10)    20.0000
+  (1,5)  (12, 30)   (3, 4)    27.5136
+  (2,3)  (40, 50)   (5, 1)    60.2163
+  (2,4)  (40, 50) (12, 10)    48.8262
+  (2,5)  (40, 50)   (3, 4)    59.0339
+  (3,4)    (5, 1) (12, 10)    11.4018
+  (3,5)    (5, 1)   (3, 4)     3.6056
+  (4,5)  (12, 10)   (3, 4)    10.8167
+  closest pair = (0, 5), d = 1.4142 km
+  farthest pair (what the ORIGINAL returned) = (0, 2), d = 60.4401 km

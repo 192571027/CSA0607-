@@ -1,0 +1,5 @@
+case,n,m,hits,original_windows,correct_windows,brute_char_comparisons,optimised_char_comparisons,horspool_char_comparisons,brute_seconds,optimised_seconds,horspool_seconds
+random log n=10000,10000,4,4,9996,9997,10270,10270,2681,0.0012,0.00034,0.00039
+random log n=100000,100000,4,4,99996,99997,102624,102624,26647,0.01296,0.00442,0.00564
+random log n=200000,200000,4,4,199996,199997,205160,205160,53298,0.0269,0.00727,0.00832
+worst case 'AAAA..A' / 'A..AB' (m=8),20000,8,0,19992,19993,159944,159944,19993,0.00884,0.00949,0.00274

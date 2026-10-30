@@ -1,0 +1,178 @@
+STEP 0  original module (no fixes applied)
+    sort_alerts
+      [FAIL] course alerts              actual=[('A4', 9), ('A3', 5), ('A3', 5), ('A5', 1), ('A5', 1)]
+                                        expect=[('A2', 9), ('A4', 9), ('A3', 5), ('A1', 3), ('A5', 1)]
+      [FAIL] max arrives last           actual=[('c', 9), ('b', 2), ('b', 2)]
+                                        expect=[('c', 9), ('b', 2), ('a', 1)]
+      [FAIL] equal severities           actual=[('B2', 5), ('B3', 5), ('B3', 5)]
+                                        expect=[('B1', 5), ('B2', 5), ('B3', 5)]
+    is_blocked
+      [FAIL] course queries             actual=[False, False, False]
+                                        expect=[True, True, False]
+      [FAIL] match is last element      actual=False
+                                        expect=True
+      [FAIL] empty blocklist            actual=None
+                                        expect=False
+    find_signature
+      [FAIL] course log                 actual=[0, 4]
+                                        expect=[0, 8]
+      [FAIL] pattern at very end        actual=[]
+                                        expect=[4]
+      [PASS] pattern longer than log    actual=[]
+      [FAIL] empty pattern              actual="UnboundLocalError: cannot access local variable 'j' where it is not associated with a value"
+                                        expect=[]
+    closest_logins
+      [FAIL] course events              actual=((0, 2), 60.440052945046304)
+                                        expect=((0, 5), 1.4142135623730951)
+      [FAIL] one event                  actual=(None, 0)
+                                        expect=(None, inf)
+      [FAIL] identical points           actual=((0, 1), 5.656854249492381)
+                                        expect=((0, 2), 0.0)
+
+STEP 1  fix D1 in sort_alerts
+    why : inner loop stops at j == 1, so alerts[0] is never compared or shifted
+    old : while j > 0 and alerts[j][1] < key[1]:
+    new : while j >= 0 and alerts[j][1] < key[1]:
+    re-test sort_alerts:
+      [FAIL] course alerts              actual=[('A1', 3), ('A1', 3), ('A1', 3), ('A1', 3), ('A4', 9)]
+                                        expect=[('A2', 9), ('A4', 9), ('A3', 5), ('A1', 3), ('A5', 1)]
+      [FAIL] max arrives last           actual=[('a', 1), ('a', 1), ('b', 2)]
+                                        expect=[('c', 9), ('b', 2), ('a', 1)]
+      [FAIL] equal severities           actual=[('B2', 5), ('B3', 5), ('B3', 5)]
+                                        expect=[('B1', 5), ('B2', 5), ('B3', 5)]
+    -> sort_alerts still has failing probes (later fixes pending)
+
+STEP 2  fix D2 in sort_alerts
+    why : after the shift loop j points one slot BEFORE the gap; the key must go to j + 1
+    old : alerts[j] = key
+    new : alerts[j + 1] = key
+    re-test sort_alerts:
+      [PASS] course alerts              actual=[('A2', 9), ('A4', 9), ('A3', 5), ('A1', 3), ('A5', 1)]
+      [PASS] max arrives last           actual=[('c', 9), ('b', 2), ('a', 1)]
+      [PASS] equal severities           actual=[('B1', 5), ('B2', 5), ('B3', 5)]
+    -> sort_alerts ALL PROBES PASS
+
+STEP 3  fix D3 in is_blocked
+    why : a match returned False, so a blocked IP looked clean
+    old : if blocklist[i] == ip:
+                      return False
+    new : if blocklist[i] == ip:
+                      return True
+    re-test is_blocked:
+      [FAIL] course queries             actual=[False, True, False]
+                                        expect=[True, True, False]
+      [FAIL] match is last element      actual=False
+                                        expect=True
+      [FAIL] empty blocklist            actual=None
+                                        expect=False
+    -> is_blocked still has failing probes (later fixes pending)
+
+STEP 4  fix D4 in is_blocked
+    why : the else branch returned on the FIRST element (only blocklist[0] was ever tested) and the function had no terminal return
+    old : else:
+                      return False
+    new : return False
+    re-test is_blocked:
+      [PASS] course queries             actual=[True, True, False]
+      [PASS] match is last element      actual=True
+      [PASS] empty blocklist            actual=False
+    -> is_blocked ALL PROBES PASS
+
+STEP 5  fix D5 in find_signature
+    why : range(n - m) omits the last window i = n - m, so a signature at the end is missed
+    old : for i in range(n - m):
+    new : for i in range(n - m + 1):
+    re-test find_signature:
+      [FAIL] course log                 actual=[0, 4, 8]
+                                        expect=[0, 8]
+      [PASS] pattern at very end        actual=[4]
+      [PASS] pattern longer than log    actual=[]
+      [FAIL] empty pattern              actual="UnboundLocalError: cannot access local variable 'j' where it is not associated with a value"
+                                        expect=[]
+    -> find_signature still has failing probes (later fixes pending)
+
+STEP 6  fix D6 in find_signature
+    why : 'j == m - 1' is also true when the LAST character mismatches (break at j = m-1), giving false hits; use for/else so a hit means the inner loop never broke
+    old : for j in range(m):
+                      if log[i + j] != pattern[j]:
+                          break
+                  if j == m - 1:
+                      hits.append(i)
+    new : for j in range(m):
+                      if log[i + j] != pattern[j]:
+                          break
+                  else:
+                      hits.append(i)
+    re-test find_signature:
+      [PASS] course log                 actual=[0, 8]
+      [PASS] pattern at very end        actual=[4]
+      [PASS] pattern longer than log    actual=[]
+      [FAIL] empty pattern              actual=[0, 1, 2, 3, 4]
+                                        expect=[]
+    -> find_signature still has failing probes (later fixes pending)
+
+STEP 7  fix H1 in find_signature
+    why : (latent, found by boundary tests) empty pattern: for/else would report every index
+    old : hits = []
+              for i in range(n - m + 1):
+    new : hits = []
+              if m == 0:
+                  return hits
+              for i in range(n - m + 1):
+    re-test find_signature:
+      [PASS] course log                 actual=[0, 8]
+      [PASS] pattern at very end        actual=[4]
+      [PASS] pattern longer than log    actual=[]
+      [PASS] empty pattern              actual=[]
+    -> find_signature ALL PROBES PASS
+
+STEP 8  fix D7 in closest_logins
+    why : min_dist starts at 0, so no distance can be < min_dist; it must start at +infinity
+    old : min_dist = 0
+    new : min_dist = math.inf
+    re-test closest_logins:
+      [FAIL] course events              actual=(None, inf)
+                                        expect=((0, 5), 1.4142135623730951)
+      [PASS] one event                  actual=(None, inf)
+      [FAIL] identical points           actual=(None, inf)
+                                        expect=((0, 2), 0.0)
+    -> closest_logins still has failing probes (later fixes pending)
+
+STEP 9  fix D8 in closest_logins
+    why : 'd > min_dist' keeps the FARTHEST pair; the closest pair needs 'd < min_dist'
+    old : if d > min_dist:
+    new : if d < min_dist:
+    re-test closest_logins:
+      [FAIL] course events              actual=((0, 0), 0.0)
+                                        expect=((0, 5), 1.4142135623730951)
+      [FAIL] one event                  actual=((0, 0), 0.0)
+                                        expect=(None, inf)
+      [FAIL] identical points           actual=((0, 0), 0.0)
+                                        expect=((0, 2), 0.0)
+    -> closest_logins still has failing probes (later fixes pending)
+
+STEP 10  fix D9 in closest_logins
+    why : j ranged over all events, so (i, i) self pairs (d = 0) and mirrored pairs were compared; j must start at i + 1
+    old : for j in range(len(events)):
+    new : for j in range(i + 1, len(events)):
+    re-test closest_logins:
+      [PASS] course events              actual=((0, 5), 1.4142135623730951)
+      [PASS] one event                  actual=(None, inf)
+      [PASS] identical points           actual=((0, 2), 0.0)
+    -> closest_logins ALL PROBES PASS
+
+FINAL  patched original vs corrected_sentinelops.py on course data: IDENTICAL
+      [PASS] course alerts              actual=[('A2', 9), ('A4', 9), ('A3', 5), ('A1', 3), ('A5', 1)]
+      [PASS] max arrives last           actual=[('c', 9), ('b', 2), ('a', 1)]
+      [PASS] equal severities           actual=[('B1', 5), ('B2', 5), ('B3', 5)]
+      [PASS] course queries             actual=[True, True, False]
+      [PASS] match is last element      actual=True
+      [PASS] empty blocklist            actual=False
+      [PASS] course log                 actual=[0, 8]
+      [PASS] pattern at very end        actual=[4]
+      [PASS] pattern longer than log    actual=[]
+      [PASS] empty pattern              actual=[]
+      [PASS] course events              actual=((0, 5), 1.4142135623730951)
+      [PASS] one event                  actual=(None, inf)
+      [PASS] identical points           actual=((0, 2), 0.0)
+FINAL  all probes on fully patched module: PASS

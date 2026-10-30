@@ -1,0 +1,14 @@
+{
+  "alerts": [["A1", 3], ["A2", 9], ["A3", 5], ["A4", 9], ["A5", 1]],
+  "blocklist": ["10.0.0.5", "10.0.0.9", "172.16.4.2"],
+  "queries": ["10.0.0.9", "10.0.0.5", "8.8.8.8"],
+  "log": "FAILFAIXFAIL",
+  "pattern": "FAIL",
+  "events_xy_km": [[2, 3], [12, 30], [40, 50], [5, 1], [12, 10], [3, 4]],
+  "expected": {
+    "sort_alerts": [["A2", 9], ["A4", 9], ["A3", 5], ["A1", 3], ["A5", 1]],
+    "is_blocked": [true, true, false],
+    "find_signature": [0, 8],
+    "closest_logins": {"pair": [0, 5], "distance_km": 1.4142135623730951}
+  }
+}

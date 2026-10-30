@@ -1,0 +1,271 @@
+
+=== ORIGINAL (defects expected) =================================
+ sort_alerts
+  [FAIL] course data
+         expected: [('A2', 9), ('A4', 9), ('A3', 5), ('A1', 3), ('A5', 1)]
+         actual  : [('A4', 9), ('A3', 5), ('A3', 5), ('A5', 1), ('A5', 1)]
+  [FAIL] no alert lost / duplicated (same multiset)
+         expected: [('A1', 3), ('A2', 9), ('A3', 5), ('A4', 9), ('A5', 1)]
+         actual  : [('A3', 5), ('A3', 5), ('A4', 9), ('A5', 1), ('A5', 1)]
+  [PASS] empty list
+  [PASS] single alert
+  [FAIL] all equal severities keep arrival order
+         expected: [('B1', 5), ('B2', 5), ('B3', 5), ('B4', 5)]
+         actual  : [('B2', 5), ('B3', 5), ('B4', 5), ('B4', 5)]
+  [FAIL] already sorted (highest first)
+         expected: [('a', 9), ('b', 5), ('c', 1)]
+         actual  : [('b', 5), ('c', 1), ('c', 1)]
+  [FAIL] reverse order (lowest first)
+         expected: [('a', 9), ('b', 5), ('c', 1)]
+         actual  : [('a', 9), ('b', 5), ('b', 5)]
+  [FAIL] maximum arrives last, must reach index 0
+         expected: [('c', 9), ('b', 2), ('a', 1)]
+         actual  : [('c', 9), ('b', 2), ('b', 2)]
+  [FAIL] two elements, swap needed (j reaches -1)
+         expected: [('b', 2), ('a', 1)]
+         actual  : [('b', 2), ('b', 2)]
+  [FAIL] duplicates of max interleaved (stability)
+         expected: [('b', 9), ('d', 9), ('a', 2), ('c', 2), ('e', 2)]
+         actual  : [('d', 9), ('c', 2), ('c', 2), ('e', 2), ('e', 2)]
+ is_blocked
+  [FAIL] course queries (blocked, blocked, clean)
+         expected: [True, True, False]
+         actual  : [False, False, False]
+  [FAIL] empty blocklist -> False (not None)
+         expected: False
+         actual  : None
+  [FAIL] match is the LAST element
+         expected: True
+         actual  : False
+  [FAIL] match is the middle element
+         expected: True
+         actual  : False
+  [FAIL] single-element list, match
+         expected: True
+         actual  : False
+  [PASS] single-element list, no match
+  [PASS] near-miss IP is not blocked
+  [FAIL] duplicate entries in blocklist
+         expected: True
+         actual  : False
+  [PASS] returns a real bool
+ find_signature
+  [FAIL] course data FAILFAIXFAIL / FAIL -> [0, 8]
+         expected: [0, 8]
+         actual  : [0, 4]
+  [FAIL] no false hit at 'FAIX' (index 4)
+         expected: False
+         actual  : True
+  [FAIL] pattern at the very end of the log
+         expected: [4]
+         actual  : []
+  [PASS] pattern at the very start only
+  [PASS] pattern longer than the log
+  [FAIL] pattern equals the log
+         expected: [0]
+         actual  : []
+  [PASS] empty log
+  [FAIL] empty pattern -> no hits
+         expected: []
+         actual  : "UnboundLocalError: cannot access local variable 'j' where it is not associated with a value"
+  [PASS] no occurrence
+  [FAIL] overlapping occurrences AAAAAA / AAAA
+         expected: [0, 1, 2]
+         actual  : [0, 1]
+  [FAIL] single-character pattern
+         expected: [0, 3, 6]
+         actual  : [0, 1, 2, 3, 4, 5]
+  [FAIL] partial-match-then-mismatch at last char (AAAB in AAAC AAAB)
+         expected: [4]
+         actual  : [0]
+  [FAIL] case sensitive
+         expected: [5]
+         actual  : []
+ closest_logins
+  [FAIL] course data -> ((0, 5), sqrt 2)
+         expected: ((0, 5), 1.4142135623730951)
+         actual  : ((0, 2), 60.440052945046304)
+  [FAIL] empty events -> (None, inf)
+         expected: (None, inf)
+         actual  : (None, 0)
+  [FAIL] one event -> (None, inf)
+         expected: (None, inf)
+         actual  : (None, 0)
+  [PASS] two events
+  [FAIL] identical locations -> distance 0 (not a self pair)
+         expected: ((0, 2), 0.0)
+         actual  : ((0, 1), 5.656854249492381)
+  [FAIL] tie -> lexicographically smallest pair
+         expected: ((0, 1), 1.0)
+         actual  : ((0, 3), 11.0)
+  [FAIL] all points share one x (vertical line)
+         expected: ((0, 2), 3.0)
+         actual  : ((0, 3), 40.0)
+  [FAIL] negative coordinates
+         expected: ((0, 1), 1.0)
+         actual  : ((0, 2), 15.556349186104045)
+  [FAIL] float coordinates
+         expected: ((0, 1), 0.7071067811865476)
+         actual  : ((0, 2), 2.8284271247461903)
+  [FAIL] closest pair is not adjacent in input order
+         expected: ((0, 3), 1.4142135623730951)
+         actual  : ((0, 2), 141.4213562373095)
+ -> ORIGINAL (defects expected): 10 passed, 32 failed
+
+=== CORRECTED ===================================================
+ sort_alerts
+  [PASS] course data
+  [PASS] no alert lost / duplicated (same multiset)
+  [PASS] empty list
+  [PASS] single alert
+  [PASS] all equal severities keep arrival order
+  [PASS] already sorted (highest first)
+  [PASS] reverse order (lowest first)
+  [PASS] maximum arrives last, must reach index 0
+  [PASS] two elements, swap needed (j reaches -1)
+  [PASS] duplicates of max interleaved (stability)
+ is_blocked
+  [PASS] course queries (blocked, blocked, clean)
+  [PASS] empty blocklist -> False (not None)
+  [PASS] match is the LAST element
+  [PASS] match is the middle element
+  [PASS] single-element list, match
+  [PASS] single-element list, no match
+  [PASS] near-miss IP is not blocked
+  [PASS] duplicate entries in blocklist
+  [PASS] returns a real bool
+ find_signature
+  [PASS] course data FAILFAIXFAIL / FAIL -> [0, 8]
+  [PASS] no false hit at 'FAIX' (index 4)
+  [PASS] pattern at the very end of the log
+  [PASS] pattern at the very start only
+  [PASS] pattern longer than the log
+  [PASS] pattern equals the log
+  [PASS] empty log
+  [PASS] empty pattern -> no hits
+  [PASS] no occurrence
+  [PASS] overlapping occurrences AAAAAA / AAAA
+  [PASS] single-character pattern
+  [PASS] partial-match-then-mismatch at last char (AAAB in AAAC AAAB)
+  [PASS] case sensitive
+ closest_logins
+  [PASS] course data -> ((0, 5), sqrt 2)
+  [PASS] empty events -> (None, inf)
+  [PASS] one event -> (None, inf)
+  [PASS] two events
+  [PASS] identical locations -> distance 0 (not a self pair)
+  [PASS] tie -> lexicographically smallest pair
+  [PASS] all points share one x (vertical line)
+  [PASS] negative coordinates
+  [PASS] float coordinates
+  [PASS] closest pair is not adjacent in input order
+ -> CORRECTED: 42 passed, 0 failed
+
+=== OPTIMISED ===================================================
+ sort_alerts
+  [PASS] course data
+  [PASS] no alert lost / duplicated (same multiset)
+  [PASS] empty list
+  [PASS] single alert
+  [PASS] all equal severities keep arrival order
+  [PASS] already sorted (highest first)
+  [PASS] reverse order (lowest first)
+  [PASS] maximum arrives last, must reach index 0
+  [PASS] two elements, swap needed (j reaches -1)
+  [PASS] duplicates of max interleaved (stability)
+ is_blocked
+  [PASS] course queries (blocked, blocked, clean)
+  [PASS] empty blocklist -> False (not None)
+  [PASS] match is the LAST element
+  [PASS] match is the middle element
+  [PASS] single-element list, match
+  [PASS] single-element list, no match
+  [PASS] near-miss IP is not blocked
+  [PASS] duplicate entries in blocklist
+  [PASS] returns a real bool
+ find_signature
+  [PASS] course data FAILFAIXFAIL / FAIL -> [0, 8]
+  [PASS] no false hit at 'FAIX' (index 4)
+  [PASS] pattern at the very end of the log
+  [PASS] pattern at the very start only
+  [PASS] pattern longer than the log
+  [PASS] pattern equals the log
+  [PASS] empty log
+  [PASS] empty pattern -> no hits
+  [PASS] no occurrence
+  [PASS] overlapping occurrences AAAAAA / AAAA
+  [PASS] single-character pattern
+  [PASS] partial-match-then-mismatch at last char (AAAB in AAAC AAAB)
+  [PASS] case sensitive
+ closest_logins
+  [PASS] course data -> ((0, 5), sqrt 2)
+  [PASS] empty events -> (None, inf)
+  [PASS] one event -> (None, inf)
+  [PASS] two events
+  [PASS] identical locations -> distance 0 (not a self pair)
+  [PASS] tie -> lexicographically smallest pair
+  [PASS] all points share one x (vertical line)
+  [PASS] negative coordinates
+  [PASS] float coordinates
+  [PASS] closest pair is not adjacent in input order
+ -> OPTIMISED: 42 passed, 0 failed
+
+=== OPTIMISED (is_blocked fed a plain list) =====================
+ sort_alerts
+  [PASS] course data
+  [PASS] no alert lost / duplicated (same multiset)
+  [PASS] empty list
+  [PASS] single alert
+  [PASS] all equal severities keep arrival order
+  [PASS] already sorted (highest first)
+  [PASS] reverse order (lowest first)
+  [PASS] maximum arrives last, must reach index 0
+  [PASS] two elements, swap needed (j reaches -1)
+  [PASS] duplicates of max interleaved (stability)
+ is_blocked
+  [PASS] course queries (blocked, blocked, clean)
+  [PASS] empty blocklist -> False (not None)
+  [PASS] match is the LAST element
+  [PASS] match is the middle element
+  [PASS] single-element list, match
+  [PASS] single-element list, no match
+  [PASS] near-miss IP is not blocked
+  [PASS] duplicate entries in blocklist
+  [PASS] returns a real bool
+ find_signature
+  [PASS] course data FAILFAIXFAIL / FAIL -> [0, 8]
+  [PASS] no false hit at 'FAIX' (index 4)
+  [PASS] pattern at the very end of the log
+  [PASS] pattern at the very start only
+  [PASS] pattern longer than the log
+  [PASS] pattern equals the log
+  [PASS] empty log
+  [PASS] empty pattern -> no hits
+  [PASS] no occurrence
+  [PASS] overlapping occurrences AAAAAA / AAAA
+  [PASS] single-character pattern
+  [PASS] partial-match-then-mismatch at last char (AAAB in AAAC AAAB)
+  [PASS] case sensitive
+ closest_logins
+  [PASS] course data -> ((0, 5), sqrt 2)
+  [PASS] empty events -> (None, inf)
+  [PASS] one event -> (None, inf)
+  [PASS] two events
+  [PASS] identical locations -> distance 0 (not a self pair)
+  [PASS] tie -> lexicographically smallest pair
+  [PASS] all points share one x (vertical line)
+  [PASS] negative coordinates
+  [PASS] float coordinates
+  [PASS] closest pair is not adjacent in input order
+ -> OPTIMISED (is_blocked fed a plain list): 42 passed, 0 failed
+
+=== Randomised differential test ==============================
+  3000 random trials x 4 functions, mismatches: 0
+
+=== SUMMARY ===================================================
+  original :  10 passed,  32 failed   (failures are the defects)
+  corrected:  42 passed,   0 failed
+  optimised:  42 passed,   0 failed (set index)
+  optimised:  42 passed,   0 failed (list input)
+  differential mismatches: 0
+  RESULT: ALL CHECKS AS EXPECTED

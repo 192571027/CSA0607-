@@ -1,0 +1,4 @@
+sort_alerts    : [('A4', 9), ('A3', 5), ('A3', 5), ('A5', 1), ('A5', 1)]
+is_blocked     : [('10.0.0.9', False), ('10.0.0.5', False), ('8.8.8.8', False)]
+find_signature : [0, 4]
+closest_logins : ((0, 2), 60.440052945046304)
