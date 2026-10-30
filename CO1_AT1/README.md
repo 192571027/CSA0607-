@@ -2,7 +2,11 @@
 
 **Course:** CSA06 – Design and Analysis of Algorithms
 **Assessment:** CO1 – Assessment Tool 1 (IT Application-Based Problem Solving)
-**Student Name / Reg. No.:** ______________________
+<<<<<<< Updated upstream
+**Student Name / Reg. No.:** _____RITHIKA.G(192571027)_________________
+=======
+**Student Name / Reg. No.:** __Rithika.G(192571027)____________________
+>>>>>>> Stashed changes
 
 ## Problem
 Audit five back-end modules of the ShopSphere e-commerce platform (duplicate detector M1, API rate limiter M2,
