@@ -1,0 +1,27 @@
+=== Q2: Quick Sort partition investigation (pivot = last element) ===
+n=1023, ideal depth ~ log2(n+1)=10, worst depth = n
+input                      comparisons max depth  time ms  first partitions (size: L|R)
+balanced (constructed)            8194        10     0.97  1023:511|511, 511:255|255, 255:127|127, 127:63|63
+random                           12206        24     1.56  1023:197|825, 197:169|27, 169:155|13, 155:52|102
+90:10 skew (constructed)         15562        42     1.45  1023:919|103, 919:826|92, 826:742|83, 742:666|75
+sorted (worst)                  522753      1023    38.98  1023:1022|0, 1022:1021|0, 1021:1020|0, 1020:1019|0
+reverse sorted                  522753      1023    35.63  1023:0|1022, 1022:0|1021, 1021:0|1020, 1020:0|1019
+Merge Sort (any input)            5110        11     1.48  halves: 1023 -> 511|512 -> ...
+
+Balanced input - first 7 partitions (size, |L|, |R|): [(1023, 511, 511), (511, 255, 255), (255, 127, 127), (127, 63, 63), (63, 31, 31), (31, 15, 15), (15, 7, 7)]
+Sorted input n=12 partitions (size, |L|, |R|): [(12, 11, 0), (11, 10, 0), (10, 9, 0), (9, 8, 0), (8, 7, 0), (7, 6, 0), (6, 5, 0), (5, 4, 0), (4, 3, 0), (3, 2, 0), (2, 1, 0)]
+
+=== Scaling: comparisons / max depth ===
+     n  QS bal cmp  QS rnd cmp QS sorted cmp  n(n-1)/2   MS cmp QS bal d QS srt d  MS d
+    64         264         329          2016      2016      301        7       64     7
+   128         649         976          8128      8128      732        8      128     8
+   256        1546        2390         32640     32640     1736        9      256     9
+   512        3595        4813        130816    130816     3949       10      512    10
+  1000        7987       11272        499500    499500     8697       10     1000    11
+  1500       12964       18471       1124250   1124250    13972       11     1500    12
+
+=== Effect of split ratio on depth/comparisons (n=1000) ===
+split 50:50  depth=  10  comparisons=   7987  theory depth ~ log(n)/log(1/0.5)=10.0
+split 70:30  depth=  16  comparisons=   8865  theory depth ~ log(n)/log(1/0.7)=19.4
+split 90:10  depth=  41  comparisons=  15154  theory depth ~ log(n)/log(1/0.9)=65.6
+split 99:1  depth= 202  comparisons=  70972  theory depth ~ log(n)/log(1/0.99)=687.3

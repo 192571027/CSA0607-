@@ -1,0 +1,33 @@
+=== Q1 Part A: Max/Min ===
+       n  D&C observed  ceil(3n/2)-2    2(n-1)  saving %  datasets
+       2             1             1         2     50.0%  4 datasets, match
+       3             3             3         4     25.0%  4 datasets, match
+       4             4             4         6     33.3%  4 datasets, match
+       5             6             6         8     25.0%  4 datasets, match
+       7             9             9        12     25.0%  4 datasets, match
+       8            10            10        14     28.6%  4 datasets, match
+      16            22            22        30     26.7%  4 datasets, match
+      31            45            45        60     25.0%  4 datasets, match
+      64            94            94       126     25.4%  4 datasets, match
+     100           162           148       198     18.2%  4 datasets, diff=14
+     128           190           190       254     25.2%  4 datasets, match
+    1000          1510          1498      1998     24.4%  4 datasets, diff=12
+    1024          1534          1534      2046     25.0%  4 datasets, match
+    5000          7950          7498      9998     20.5%  4 datasets, diff=452
+   10000         15902         14998     19998     20.5%  4 datasets, diff=904
+   65536         98302         98302    131070     25.0%  4 datasets, match
+
+=== Q1 Part B: Binary Search (probes = 3-way comparisons) ===
+        n  floor(lg n)+1  succ avg  succ max  first   last  unsucc avg  unsucc max
+        1              1      1.00         1      1      1        1.00           1
+        2              2      1.50         2      1      2        1.75           2
+        3              2      1.67         2      2      2        2.00           2
+        7              3      2.43         3      3      3        3.00           3
+        8              4      2.62         4      3      4        3.30           4
+      100              7      5.80         7      6      7        6.74           7
+     1000             10      8.99        10      9     10        9.98          10
+    10000             14     12.36        14     13     14       13.36          14
+   100000             17     15.69        17     16     17       16.69          17
+  1000000             20     18.96        20     19     20       19.95          20
+
+Linear search worst case at n=1,000,000 = 1,000,000 comparisons vs binary search <= 20 probes

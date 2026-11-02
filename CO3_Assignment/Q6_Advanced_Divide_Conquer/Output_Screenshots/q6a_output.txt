@@ -1,0 +1,30 @@
+=== Correctness (k-th smallest vs sorted) ===
+MoM, QS-random, QS-first match sorted()[k] on 300 random cases (with duplicates)
+
+=== Comparisons to find the median (k=n/2) ===
+      n        input   MoM cmp MoM cmp/n  QS-rand  QS-first QS-first depth
+    100       random       374      3.74      178       334              8
+    100       sorted       511      5.11      564      3825             51
+    500       random      3710      7.42     1796      1494             12
+    500       sorted      2698      5.40     2072     94125            251
+   1000       random      7836      7.84     3669      2847             13
+   1000       sorted      5538      5.54     4254    375750            501
+   2000       random     15568      7.78     7296      4896             16
+   2000       sorted     11290      5.64     9597   1501500           1001
+   4000       random     32142      8.04    10316      9353             12
+   4000       sorted     22950      5.74     9847   6003000           2001
+(QS-first = deterministic first-element pivot; on sorted input every pivot is the current minimum -> partitions 0 : n-1)
+
+=== Effect of a deterministic poor-pivot strategy (n=2000, median, sorted input) ===
+pivot=first (deterministic)  comparisons= 1501500  max depth= 1001  first subproblem sizes=[2000, 1999, 1998, 1997, 1996]
+pivot=random                 comparisons=    8541  max depth=   13  first subproblem sizes=[2000, 1567, 1196, 1125, 1030]
+median of medians            comparisons=   11290  max depth=    9  first subproblem sizes=[2000, 400, 80, 16, 4]
+
+=== Randomised QuickSelect is not immune (n=2000, 300 runs, random input) ===
+QS-random comparisons: min=2000 median=6544 95th pct=10588 max=13689  |  MoM (deterministic): 15558
+  => random pivots give expected O(n) but a bad run (max) can cost several times more; MoM has a hard bound.
+
+=== MoM recurrence check: T(n) <= T(n/5) + T(7n/10 + 6) + c*n  =>  comparisons/n stays bounded ===
+  n=   1000: cmp=     7519  cmp/n=7.52  max depth=10
+  n=  10000: cmp=    81890  cmp/n=8.19  max depth=12
+  n= 100000: cmp=   829778  cmp/n=8.30  max depth=15

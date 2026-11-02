@@ -1,0 +1,28 @@
+=== Q3 correctness ===
+schoolbook & Karatsuba agree with Python's built-in * on 180 random pairs
+
+=== Crossover experiment: digit multiplications and best-of-5 time ===
+ n digits school mults  kara mults    n^1.585 mult ratio  school ms   kara ms   faster
+        2            4           5          3       0.80      0.003     0.003   school
+        4           16          15          9       1.07      0.006     0.011   school
+        8           64          41         27       1.56      0.013     0.029   school
+       16          256         151         81       1.70      0.038     0.108   school
+       32         1024         467        243       2.19      0.140     0.340   school
+       64         4096        1405        729       2.92      0.524     1.053   school
+      128        16384        4219       2187       3.88      2.066     3.202   school
+      256        65536       12747       6561       5.14      8.728     9.675   school
+      512       262144       38293      19683       6.85     37.801    29.167Karatsuba
+     1024      1048576      115059      59049       9.11    156.358    87.943Karatsuba
+     2048      4194304      344759     177147      12.17    673.620   270.660Karatsuba
+
+=== Hybrid: Karatsuba with schoolbook below a cutoff (n=1024, best of 3) ===
+ cutoff     mults   time ms
+      1    114795   100.091
+      2    108917   113.040
+      4    113998    63.696
+      8    136970    39.970
+     16    173594    32.741
+     32    225890    67.230
+     64    296476    45.506
+    128    395601    53.823
+best cutoff in this run: 16 digits

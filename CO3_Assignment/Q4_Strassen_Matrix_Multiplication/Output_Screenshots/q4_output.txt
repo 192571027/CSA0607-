@@ -1,0 +1,39 @@
+=== Q4 correctness (integer matrices, exact) ===
+Strassen == conventional for n in 1,2,3,5,8,13,16,31 (non powers of two use padding)
+
+=== Part 1: pure Python, scalar operation counts and time (pure Strassen, cutoff=1) ===
+    n    conv mul     str mul mul ratio   conv add     str add   conv ms    str ms
+    2           8           7      1.14          4          18      0.00      0.02
+    4          64          49      1.31         48         198      0.01      0.16
+    8         512         343      1.49        448        1674      0.06      1.29
+   16        4096        2401      1.71       3840       12870      0.27      9.25
+   32       32768       16807      1.95      31744       94698      2.15     64.86
+   64      262144      117649      2.23     258048      681318     17.51    466.35
+  128     2097152      823543      2.55    2080768     4842954    142.94   3607.38
+
+=== Part 1b: Strassen with cutoff (n=128, pure Python) ===
+ cutoff       mul       add   time ms
+   conv   2097152   2080768     147.9
+      1    823543   4842954    3597.1
+      2    941192   3195868    1038.5
+      4   1075648   2321904     397.7
+      8   1229312   1899328     236.0
+     16   1404928   1745664     159.5
+     32   1605632   1758208     138.7
+     64   1835008   1880064     137.0
+
+=== Part 1c: padding overhead for non powers of two ===
+    n padded m extra cells % conv mul n^3 strassen mul (padded)
+   33       64        276.1%        35937                117649
+   65      128        287.8%       274625                823543
+  100      128         63.8%      1000000                823543
+  129      256        293.8%      2146689               5764801
+  200      256         63.8%      8000000               5764801
+
+=== Part 2: NumPy float64, Strassen(cutoff=128, recursion in Python) vs np.matmul (BLAS) ===
+     n   BLAS ms  Strassen ms ratio S/B  max abs err
+   128      0.14         0.13      0.94     0.00e+00
+   256      0.97         3.11      3.21     1.07e-13
+   512      7.03        22.16      3.15     2.91e-13
+  1024     38.28       129.19      3.37     8.92e-13
+  2048    286.98      1015.74      3.54     3.11e-12

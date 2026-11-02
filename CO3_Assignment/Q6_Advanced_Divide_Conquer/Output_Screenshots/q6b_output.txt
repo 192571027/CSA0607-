@@ -1,0 +1,25 @@
+=== Correctness: MITM vs brute force (random small instances) ===
+400 instances agree; reconstructed subsets sum to the target
+example: a=[3, 34, 4, 12, 5, 2], T=9 -> subset [4, 5]; T=30 -> None
+
+=== Work and memory (target is unreachable so both do their FULL work; all values random 1..10^9) ===
+   n  2^n (brute sums)  MITM sums 2*2^(n/2)  MITM search steps  MITM stored  brute ms  MITM ms
+  10              1024                   64                 32           64       0.1      0.0
+  14             16384                  256                128          256       2.2      0.1
+  18            262144                 1024                512         1024      57.3      0.3
+  20           1048576                 2048               1024         2048     283.9      0.7
+  22           4194304                 4096               2048         4096    1096.1      1.0
+  24          16777216                 8192               4096         8192    5048.0      2.0
+
+MITM only (brute force infeasible):
+  n=30: brute would enumerate 2^30 = 1,073,741,824 subsets; MITM generated 65,536 sums, 32,768 search steps, 0.0 s, ~1 MB of integers if stored as 8-byte values (Python lists use ~3x more)
+  n=36: brute would enumerate 2^36 = 68,719,476,736 subsets; MITM generated 524,288 sums, 262,144 search steps, 0.4 s, ~4 MB of integers if stored as 8-byte values (Python lists use ~3x more)
+  n=40: brute would enumerate 2^40 = 1,099,511,627,776 subsets; MITM generated 2,097,152 sums, 1,048,576 search steps, 2.1 s, ~17 MB of integers if stored as 8-byte values (Python lists use ~3x more)
+
+=== Time-memory trade-off (theory) ===
+   n            brute time 2^n   MITM time 2^(n/2)*n/2   MITM memory 2^(n/2)  brute memory (streaming)
+  20                 1,048,576                  10,240                 1,024         O(n) / O(1) extra
+  30             1,073,741,824                 491,520                32,768         O(n) / O(1) extra
+  40         1,099,511,627,776              20,971,520             1,048,576         O(n) / O(1) extra
+  50     1,125,899,906,842,624             838,860,800            33,554,432         O(n) / O(1) extra
+  60 1,152,921,504,606,846,976          32,212,254,720         1,073,741,824         O(n) / O(1) extra
