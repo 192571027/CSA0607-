@@ -1,0 +1,95 @@
+========================================================================
+MODULE 4 - STRASSEN ON THE 2 x 2 SAMPLE MATRICES
+========================================================================
+A = [[1, 7], [3, 5]]  B = [[1, 3], [7, 5]] 
+
+A11=1 A12=7 A21=3 A22=5
+B11=1 B12=3 B21=7 B22=5
+
+M1 = (A11 + A22)(B11 + B22) = (1+5)(1+5) = 6 x 6 = 36
+M2 = (A21 + A22) B11        = (3+5) x 1 = 8 x 1 = 8
+M3 = A11 (B12 - B22)        = 1 x (3-5) = 1 x -2 = -2
+M4 = A22 (B21 - B11)        = 5 x (7-1) = 5 x 6 = 30
+M5 = (A11 + A12) B22        = (1+7) x 5 = 8 x 5 = 40
+M6 = (A21 - A11)(B11 + B12) = (3-1)(1+3) = 2 x 4 = 8
+M7 = (A12 - A22)(B21 + B22) = (7-5)(7+5) = 2 x 12 = 24
+
+C11 = M1 + M4 - M5 + M7 = 36+30-40+24 = 50
+C12 = M3 + M5           = -2+40 = 38
+C21 = M2 + M4           = 8+30 = 38
+C22 = M1 - M2 + M3 + M6 = 36-8+(-2)+8 = 34
+
+Strassen     C = [[50, 38], [38, 34]]
+Conventional C = [[50, 38], [38, 34]]
+Results identical: True
+Scalar multiplications: Strassen 7, conventional 8
+
+========================================================================
+CORRECTNESS: recursive Strassen (cut-off 1) vs numpy on random integer matrices
+========================================================================
+n=  2  equal to A@B: True   scalar mults used = 7   (7^k = 7)
+n=  4  equal to A@B: True   scalar mults used = 49   (7^k = 49)
+n=  8  equal to A@B: True   scalar mults used = 343   (7^k = 343)
+n= 16  equal to A@B: True   scalar mults used = 2,401   (7^k = 2,401)
+n= 32  equal to A@B: True   scalar mults used = 16,807   (7^k = 16,807)
+n= 64  equal to A@B: True   scalar mults used = 117,649   (7^k = 117,649)
+n=100  equal to A@B: True   scalar mults used = 823,543   (7^k = 823,543)
+
+========================================================================
+PRODUCTION COUNTS FOR n = 1,024 (exact, from the recurrences)
+========================================================================
+Conventional : multiplications = n^3          = 1,073,741,824
+               additions       = n^2 (n-1)    = 1,072,693,248
+               total arithmetic               = 2,146,435,072
+Strassen (full recursion, cut-off 1):
+               multiplications = 7^10         = 282,475,249
+               additions       = 6(7^10-4^10) = 1,688,560,038
+               total arithmetic               = 1,971,035,287
+Multiplication ratio  Strassen / conventional = 0.2631  (3.80x fewer, saving 73.7%)
+Total-arithmetic ratio                        = 0.9183  (saving only 8.2%)
+
+Effect of the cut-off (hybrid) on arithmetic operations, n = 1,024:
+ cut-off  levels   multiplications         additions             total  vs conventional
+       1      10       282,475,249     1,688,560,038     1,971,035,287          0.9183x
+       2       9       322,828,856     1,123,609,540     1,446,438,396          0.6739x
+       4       8       368,947,264       823,839,888     1,192,787,152          0.5557x
+       8       7       421,654,016       678,896,320     1,100,550,336          0.5127x
+      16       6       481,890,304       626,189,568     1,108,079,872          0.5162x
+      32       5       550,731,776       630,492,160     1,181,223,936          0.5503x
+      64       4       629,407,744       672,288,768     1,301,696,512          0.6064x
+     128       3       719,323,136       741,130,240     1,460,453,376          0.6804x
+     256       2       822,083,584       831,848,448     1,653,932,032          0.7705x
+     512       1       939,524,096       942,407,680     1,881,931,776          0.8768x
+    1024       0     1,073,741,824     1,072,693,248     2,146,435,072          1.0000x
+Minimum total arithmetic at cut-off 8: 1,100,550,336 (48.7% fewer than conventional)
+
+Cross-over where one Strassen level starts to pay off (total arithmetic):
+  n=  2: conventional        12   one-level Strassen        25   conventional cheaper
+  n=  4: conventional       112   one-level Strassen       156   conventional cheaper
+  n=  8: conventional       960   one-level Strassen     1,072   conventional cheaper
+  n= 16: conventional     7,936   one-level Strassen     7,872   Strassen cheaper
+  n= 32: conventional    64,512   one-level Strassen    60,160   Strassen cheaper
+  n= 64: conventional   520,192   one-level Strassen   470,016   Strassen cheaper
+
+Memory for n = 1,024 (8-byte doubles):
+  A, B, C                         = 3 x 8 MiB = 24 MiB
+  Strassen temporaries, naive (17 half-size matrices per level, summed over levels) ~ 45 MiB
+
+========================================================================
+TIMING 1: pure-Python leaves (arithmetic-dominated), n = 128, best of 3
+========================================================================
+  cut-off  64: conventional   0.074s   hybrid Strassen   0.089s   ratio  1.19
+  cut-off  32: conventional   0.076s   hybrid Strassen   0.100s   ratio  1.31
+  cut-off  16: conventional   0.078s   hybrid Strassen   0.120s   ratio  1.53
+  cut-off   8: conventional   0.083s   hybrid Strassen   0.164s   ratio  1.98
+
+========================================================================
+TIMING 2: numpy/BLAS leaves, float64, n = 1,024
+========================================================================
+  conventional (BLAS), best of 5 :   0.043 s
+  Strassen hybrid, cut-off 512, best of 5:   0.052 s   max |error| vs BLAS = 9.09e-13
+  Strassen hybrid, cut-off 256, best of 5:   0.069 s   max |error| vs BLAS = 2.56e-12
+  Strassen hybrid, cut-off 128, best of 5:   0.077 s   max |error| vs BLAS = 3.55e-12
+  Strassen hybrid, cut-off  64, best of 5:   0.110 s   max |error| vs BLAS = 6.00e-12
+
+Graph saved to Report/strassen_comparison.png

@@ -1,0 +1,32 @@
+KartIQ Module 4 - Strassen's matrix multiplication (hybrid) for C = A x B
+==================================================================
+ALGORITHM Strassen(A, B, n, cutoff)            // n is a power of two (pad with zeros otherwise)
+  if n <= cutoff then return ConventionalMultiply(A, B, n)   // BASE CASE (hybrid switch)
+  h <- n / 2
+  split A into A11 A12 / A21 A22 and B into B11 B12 / B21 B22   // DIVIDE into h x h blocks
+  // CONQUER : seven recursive products instead of eight
+  M1 <- Strassen(A11 + A22, B11 + B22, h, cutoff)
+  M2 <- Strassen(A21 + A22, B11,       h, cutoff)
+  M3 <- Strassen(A11,       B12 - B22, h, cutoff)
+  M4 <- Strassen(A22,       B21 - B11, h, cutoff)
+  M5 <- Strassen(A11 + A12, B22,       h, cutoff)
+  M6 <- Strassen(A21 - A11, B11 + B12, h, cutoff)
+  M7 <- Strassen(A12 - A22, B21 + B22, h, cutoff)
+  // COMBINE : 8 block additions / subtractions
+  C11 <- M1 + M4 - M5 + M7
+  C12 <- M3 + M5
+  C21 <- M2 + M4
+  C22 <- M1 - M2 + M3 + M6
+  return the matrix [ C11 C12 ; C21 C22 ]
+
+ALGORITHM ConventionalMultiply(A, B, n)
+  for i <- 1..n, for j <- 1..n:  C[i][j] <- sum over k of A[i][k] * B[k][j]
+  return C
+
+ALGORITHM StrassenAny(A, B, n)                 // arbitrary size
+  m <- smallest power of two >= n
+  pad A and B with zeros to m x m ; C <- Strassen(Apad, Bpad, m, cutoff) ; return top-left n x n of C
+
+Recurrence : T(n) = 7 T(n/2) + 18 (n/2)^2 additions, i.e. T(n) = 7 T(n/2) + Theta(n^2)
+           => Theta(n^(lg 7)) = Theta(n^2.807)   (Master theorem, case 1)
+Extra space: Theta(n^2) for temporaries ; conventional method needs none beyond C

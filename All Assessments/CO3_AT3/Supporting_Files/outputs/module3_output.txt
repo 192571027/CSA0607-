@@ -1,0 +1,87 @@
+========================================================================
+MODULE 3 - BINARY SEARCH ON THE SORTED OUTPUT OF MODULE 1
+========================================================================
+Sorted list: [(101, 'O4'), (102, 'O2'), (102, 'O5'), (103, 'O6'), (105, 'O1'), (105, 'O3')]
+
+--- standard binary search for timestamp 102 ---
+  lo=0 hi=5 mid=2 arr[mid]=102  key=102  -> found
+  result index=2, order=(102, 'O5'), comparisons=1
+
+--- standard binary search for timestamp 105 ---
+  lo=0 hi=5 mid=2 arr[mid]=102  key=105  -> go right
+  lo=3 hi=5 mid=4 arr[mid]=105  key=105  -> found
+  result index=4, order=(105, 'O1'), comparisons=2
+
+--- standard binary search for timestamp 104 ---
+  lo=0 hi=5 mid=2 arr[mid]=102  key=104  -> go right
+  lo=3 hi=5 mid=4 arr[mid]=105  key=104  -> go left
+  lo=3 hi=3 mid=3 arr[mid]=103  key=104  -> go right
+  result index=-1, order=None, comparisons=3
+
+Standard search returns an ARBITRARY match among duplicates.
+Now the modified search that returns the FIRST order:
+
+--- first_occurrence for timestamp 102 ---
+  lo=0 hi=6 mid=3 arr[mid]=103  key=102  -> >= key: hi = mid
+  lo=0 hi=3 mid=1 arr[mid]=102  key=102  -> >= key: hi = mid
+  lo=0 hi=1 mid=0 arr[mid]=101  key=102  -> < key : lo = mid+1
+  result index=1, order=(102, 'O2'), comparisons=4
+
+--- first_occurrence for timestamp 105 ---
+  lo=0 hi=6 mid=3 arr[mid]=103  key=105  -> < key : lo = mid+1
+  lo=4 hi=6 mid=5 arr[mid]=105  key=105  -> >= key: hi = mid
+  lo=4 hi=5 mid=4 arr[mid]=105  key=105  -> >= key: hi = mid
+  result index=4, order=(105, 'O1'), comparisons=4
+
+--- first_occurrence for timestamp 101 ---
+  lo=0 hi=6 mid=3 arr[mid]=103  key=101  -> >= key: hi = mid
+  lo=0 hi=3 mid=1 arr[mid]=102  key=101  -> >= key: hi = mid
+  lo=0 hi=1 mid=0 arr[mid]=101  key=101  -> >= key: hi = mid
+  result index=0, order=(101, 'O4'), comparisons=4
+
+--- first_occurrence for timestamp 103 ---
+  lo=0 hi=6 mid=3 arr[mid]=103  key=103  -> >= key: hi = mid
+  lo=0 hi=3 mid=1 arr[mid]=102  key=103  -> < key : lo = mid+1
+  lo=2 hi=3 mid=2 arr[mid]=102  key=103  -> < key : lo = mid+1
+  result index=3, order=(103, 'O6'), comparisons=4
+
+--- first_occurrence for timestamp 104 ---
+  lo=0 hi=6 mid=3 arr[mid]=103  key=104  -> < key : lo = mid+1
+  lo=4 hi=6 mid=5 arr[mid]=105  key=104  -> >= key: hi = mid
+  lo=4 hi=5 mid=4 arr[mid]=105  key=104  -> >= key: hi = mid
+  result index=-1, order=NOT FOUND, comparisons=4
+
+--- first_occurrence for timestamp 99 ---
+  lo=0 hi=6 mid=3 arr[mid]=103  key=99  -> >= key: hi = mid
+  lo=0 hi=3 mid=1 arr[mid]=102  key=99  -> >= key: hi = mid
+  lo=0 hi=1 mid=0 arr[mid]=101  key=99  -> >= key: hi = mid
+  result index=-1, order=NOT FOUND, comparisons=4
+
+--- first_occurrence for timestamp 200 ---
+  lo=0 hi=6 mid=3 arr[mid]=103  key=200  -> < key : lo = mid+1
+  lo=4 hi=6 mid=5 arr[mid]=105  key=200  -> < key : lo = mid+1
+  result index=-1, order=NOT FOUND, comparisons=3
+
+========================================================================
+VERIFICATION against a brute-force scan on random sorted data
+========================================================================
+2000 random tests passed: True
+
+========================================================================
+WHY SORTING IS ESSENTIAL: binary search on UNSORTED data
+========================================================================
+search 101 in the unsorted arrival-order list -> -1 (101 IS present at index 3 -> wrongly missed)
+search 101 in the sorted list                -> 0
+
+========================================================================
+PRODUCTION SCALE: n = 10,000,000 orders (virtual sorted array)
+========================================================================
+floor(lg n) + 1                     = 24
+ceil(lg n) + 1                      = 25
+max comparisons observed (standard) = 24
+max comparisons observed (first)    = 25
+first_occurrence(1,234,567) -> index 3703701 (expected 3703701), comparisons 24
+linear search worst case             = 10,000,000 comparisons (average if present ~ 5,000,000)
+speed-up in comparisons (worst)      = 416,667 x
+
+Graph saved to Report/binary_search_comparisons.png

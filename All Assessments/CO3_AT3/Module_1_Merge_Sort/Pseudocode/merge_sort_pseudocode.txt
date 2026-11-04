@@ -1,0 +1,45 @@
+KartIQ Module 1 - Stable Merge Sort (orders sorted by timestamp)
+==================================================================
+Each element of A is a record (timestamp, orderID); only the timestamp is the key.
+
+ALGORITHM MergeSort(A, lo, hi, aux)          // sorts A[lo .. hi-1]
+  Input : array A of records, half-open range [lo, hi), scratch array aux of size >= hi
+  Output: A[lo..hi-1] sorted by timestamp; equal timestamps keep their original order
+  if hi - lo <= 1 then                       // BASE CASE
+      return
+  mid <- floor((lo + hi) / 2)                // DIVIDE
+  MergeSort(A, lo,  mid, aux)                // CONQUER left half
+  MergeSort(A, mid, hi,  aux)                // CONQUER right half
+  Merge(A, lo, mid, hi, aux)                 // COMBINE
+
+ALGORITHM Merge(A, lo, mid, hi, aux)         // merges sorted A[lo..mid-1] and A[mid..hi-1]
+  for k <- lo to hi-1 do aux[k] <- A[k]      // copy both runs to scratch space
+  i <- lo ; j <- mid ; k <- lo
+  while i < mid and j < hi do
+      if aux[i].timestamp <= aux[j].timestamp then   // "<=" (not "<") => STABLE:
+          A[k] <- aux[i] ; i <- i + 1                // on a tie the LEFT (earlier) record goes first
+      else
+          A[k] <- aux[j] ; j <- j + 1
+      k <- k + 1
+  while i < mid do  A[k] <- aux[i] ; i <- i + 1 ; k <- k + 1     // left leftovers
+  while j < hi  do  A[k] <- aux[j] ; j <- j + 1 ; k <- k + 1     // right leftovers
+
+Main call : MergeSort(A, 0, n, aux)
+Recurrence: T(n) = 2 T(n/2) + (n - 1)  (worst case),  T(1) = 0   =>  T(n) = n lg n - n + 1
+Extra space: Theta(n) for aux ; recursion depth ceil(lg n)
+
+--------------------------------------------------------------------
+EXTERNAL MERGE SORT (data does not fit in RAM)
+--------------------------------------------------------------------
+ALGORITHM ExternalMergeSort(inputFile, runSize M)
+  runs <- empty list
+  repeat                                          // PHASE 1 : create sorted runs
+      read the next M records from inputFile into buffer B (in arrival order)
+      MergeSort(B, 0, |B|, aux)                   // stable in-memory sort
+      write B to a new run file ; append file to runs   // runs numbered in arrival order
+  until inputFile is exhausted
+  open all run files with one input buffer each   // PHASE 2 : k-way merge, k = |runs|
+  build a min-heap on (timestamp, runIndex) of the first record of every run
+  while heap not empty do
+      pop the smallest (timestamp, runIndex) ; write the record to the output file
+      read the next record of that run and push it   // ties broken by runIndex = arrival order

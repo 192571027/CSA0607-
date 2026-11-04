@@ -1,0 +1,40 @@
+KartIQ Module 2 - Quick Sort for the live seller leaderboard
+==================================================================
+ALGORITHM QuickSort(A, lo, hi, strategy)      // sorts A[lo .. hi]
+  if lo >= hi then return                      // BASE CASE
+  ChoosePivot(A, lo, hi, strategy)             // moves the chosen pivot to A[lo]
+  p <- Partition(A, lo, hi)                    // DIVIDE : A[lo..p-1] < A[p] <= A[p+1..hi]
+  QuickSort(A, lo, p-1, strategy)              // CONQUER left
+  QuickSort(A, p+1, hi, strategy)              // CONQUER right
+  // COMBINE : nothing to do - the sort happened in place
+
+ALGORITHM Partition(A, lo, hi)                 // pivot = A[lo]
+  pivot <- A[lo] ; i <- lo
+  for j <- lo+1 to hi do
+      if A[j] < pivot then
+          i <- i + 1 ; swap A[i], A[j]
+  swap A[lo], A[i]                             // pivot to its final position
+  return i                                     // exactly hi - lo comparisons
+
+ALGORITHM ChoosePivot(A, lo, hi, strategy)
+  if strategy = FIRST   then return                       // CURRENT (bad on sorted data)
+  if strategy = RANDOM  then p <- random integer in [lo, hi]
+  if strategy = MEDIAN3 then                              // PROPOSED
+      mid <- floor((lo + hi) / 2)
+      p <- index of the median of A[lo], A[mid], A[hi]    // 3 comparisons
+  swap A[lo], A[p]
+
+ALGORITHM QuickSortSafe(A, lo, hi)             // proposed production version
+  while hi - lo + 1 > 16 do
+      ChoosePivot(A, lo, hi, MEDIAN3)
+      p <- Partition(A, lo, hi)
+      recurse on the SMALLER side ; loop on the LARGER side   // stack depth <= lg n
+      if recursion depth exceeds 2 * lg n then switch to HeapSort (introsort guard)
+  InsertionSort(A, lo, hi)                     // small ranges / nearly sorted ranges
+
+Recurrences
+  best case   : T(n) = 2 T(n/2) + (n - 1)       => n lg n - n + 1  = Theta(n log n)
+  worst case  : T(n) = T(n-1) + (n - 1), T(1)=0 => n (n-1) / 2    = Theta(n^2)
+  average     : about 2 n ln n  (1.39 n lg n)
+Extra space : O(1) besides recursion stack ; stack = O(n) worst, O(lg n) with the safe version
+Stability   : NOT stable

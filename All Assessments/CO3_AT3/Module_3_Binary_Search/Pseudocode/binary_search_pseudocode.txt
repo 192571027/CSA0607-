@@ -1,0 +1,27 @@
+KartIQ Module 3 - Binary Search for order lookup
+==================================================================
+PRECONDITION: A[0..n-1] is sorted by timestamp (output of Module 1).
+
+ALGORITHM BinarySearch(A, n, key)              // any match
+  lo <- 0 ; hi <- n - 1
+  while lo <= hi do
+      mid <- floor((lo + hi) / 2)              // DIVIDE : pick the middle
+      if A[mid].timestamp = key then return mid          // found
+      else if A[mid].timestamp < key then lo <- mid + 1  // CONQUER the right half only
+      else hi <- mid - 1                                 // CONQUER the left half only
+  return NOT_FOUND                             // COMBINE : none (answer is the sub-answer)
+
+Recurrence : T(n) = T(floor(n/2)) + 1 , T(1) = 1  =>  T(n) = floor(lg n) + 1
+n = 10,000,000 => 24 comparisons ; space O(1) iterative
+
+ALGORITHM FirstOccurrence(A, n, key)           // MODIFIED : leftmost order with this timestamp
+  lo <- 0 ; hi <- n                            // search window [lo, hi)
+  while lo < hi do
+      mid <- floor((lo + hi) / 2)
+      if A[mid].timestamp < key then lo <- mid + 1      // everything left of mid is too small
+      else hi <- mid                                    // A[mid] >= key : answer is at mid or left
+  if lo < n and A[lo].timestamp = key then return lo
+  return NOT_FOUND
+  // Does NOT stop when A[mid] = key, so it always converges on the leftmost match.
+  // Cost : ceil(lg n) iterations + 1 final check = 25 comparisons for n = 10,000,000.
+  // Because Module 1 is stable, A[lo] is also the EARLIEST-ARRIVING order with that timestamp.

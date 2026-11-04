@@ -1,0 +1,41 @@
+========================================================================
+MODULE 2 - ONE PARTITION STEP ON THE SAMPLE SCORES (first-element pivot)
+========================================================================
+Input: [42, 17, 63, 8, 55, 29]
+  pivot = 42   array = [42, 17, 63, 8, 55, 29]
+  j=1: 17 < 42 -> i=1, swap  -> [42, 17, 63, 8, 55, 29]
+  j=2: 63 >= 42 -> no swap            -> [42, 17, 63, 8, 55, 29]
+  j=3:  8 < 42 -> i=2, swap  -> [42, 17, 8, 63, 55, 29]
+  j=4: 55 >= 42 -> no swap            -> [42, 17, 8, 63, 55, 29]
+  j=5: 29 < 42 -> i=3, swap  -> [42, 17, 8, 29, 55, 63]
+  place pivot: swap a[0] and a[3]  -> [29, 17, 8, 42, 55, 63]  (pivot index 3)
+Result: left part [29, 17, 8] | pivot 42 | right part [55, 63]
+Comparisons in this partition: 5  (= n - 1)
+
+Full sort of the sample: [8, 17, 29, 42, 55, 63] comparisons: 9
+
+========================================================================
+EXPERIMENT - nearly sorted data (1% of positions disturbed by adjacent swaps)
+========================================================================
+     n        first    median3     random     n(n-1)/2     n lg n  depth first  depth med3
+   250       30,830      1,892      1,784       31,125      1,991          248           9
+   500      123,955      4,271      4,325      124,750      4,483          495          10
+  1000      493,795      9,532     10,842      499,500      9,966          990          11
+  2000    1,985,832     21,065     24,530    1,999,000     21,932         1983          12
+  4000    7,916,984     46,114     52,044    7,998,000     47,863         3960          13
+  8000   31,692,291    100,201    113,926   31,996,000    103,726         7920          14
+
+Fully sorted and reverse-sorted input (n = 2000):
+  sorted   first=1,999,000  median3=21,033  random=24,770
+  reverse  first=1,999,000  median3=504,005  random=26,504
+
+========================================================================
+PRODUCTION ESTIMATE (n = 100,000 sellers, nearly sorted)
+========================================================================
+First-element pivot (worst case) n(n-1)/2    = 4,999,950,000
+Median-of-3 on nearly sorted ~ n lg n - n + 1 = 1,560,965
+Random pivot, expected 2(n+1)H_n - 4n         = 2,018,052
+Reduction first -> median-of-3                 = 3,203 x fewer comparisons
+Recursion depth: first = n-1 = 99,999;  median-of-3 ~ lg n = 16.6
+
+Graph saved to Report/quick_sort_comparisons.png
