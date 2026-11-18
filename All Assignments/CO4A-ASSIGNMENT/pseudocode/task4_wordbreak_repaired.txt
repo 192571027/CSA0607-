@@ -1,0 +1,28 @@
+ALGORITHM WordBreak(Text, Dictionary)          // REPAIRED VERSION
+INPUT:
+    Text       - string of length n
+    Dictionary - collection of valid words
+OUTPUT:
+    TRUE if Text can be completely segmented
+    FALSE otherwise
+BEGIN
+    DP[0] ← TRUE
+
+    FOR i ← 1 TO n DO
+        DP[i] ← FALSE
+        FOR j ← 0 TO i - 1 DO
+            IF DP[j] = TRUE AND substring(Text, j, i) is in Dictionary THEN   // <-- only changed line
+                DP[i] ← TRUE
+                BREAK
+            END IF
+        END FOR
+    END FOR
+
+    RETURN DP[n]
+END
+
+// Original (faulty) condition:   IF substring(Text, j, i) is in Dictionary THEN
+// Failing input : Text = "catxdog", Dictionary = {cat, dog}
+//   Faulty gives DP[7] = TRUE because "dog" matches at j = 4, but DP[4] = FALSE ("catx").
+//   Correct answer is FALSE; first incorrect state is DP[7].
+// Regression    : Text = "catdog", Dictionary = {cat, dog} -> TRUE for both versions.

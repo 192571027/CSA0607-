@@ -1,0 +1,52 @@
+// DP[i][w] = maximum value using only the first i items with total weight <= w
+// Recurrence:
+//   DP[0][w] = 0, DP[i][0] = 0
+//   DP[i][w] = DP[i-1][w]                                        if Wt[i] > w
+//   DP[i][w] = max(DP[i-1][w], Val[i] + DP[i-1][w - Wt[i]])      if Wt[i] <= w
+
+ALGORITHM Knapsack01(n, Wt, Val, Capacity)
+INPUT:
+    n - number of items; Wt[1..n] positive integers; Val[1..n]; Capacity >= 0 (integer)
+OUTPUT:
+    BestValue - maximum total value
+    Selected  - list of item numbers chosen
+BEGIN
+    FOR w ← 0 TO Capacity DO
+        DP[0][w] ← 0
+    END FOR
+    FOR i ← 1 TO n DO
+        DP[i][0] ← 0
+    END FOR
+
+    FOR i ← 1 TO n DO
+        FOR w ← 1 TO Capacity DO
+            IF Wt[i] > w THEN
+                DP[i][w] ← DP[i-1][w]
+            ELSE
+                Exclude ← DP[i-1][w]
+                Include ← Val[i] + DP[i-1][w - Wt[i]]
+                IF Include > Exclude THEN
+                    DP[i][w] ← Include
+                ELSE
+                    DP[i][w] ← Exclude
+                END IF
+            END IF
+        END FOR
+    END FOR
+
+    BestValue ← DP[n][Capacity]
+
+    Selected ← empty list
+    w ← Capacity
+    FOR i ← n DOWNTO 1 DO
+        IF DP[i][w] ≠ DP[i-1][w] THEN      // value changed, so item i was taken
+            ADD i to Selected
+            w ← w - Wt[i]
+        END IF
+    END FOR
+
+    RETURN BestValue, Selected
+END
+
+// Desk-check: P(2,12) Q(3,20) R(4,25) S(5,30), Capacity = 7
+//   DP[4][7] = 45 ; Selected = {R, Q} ; total weight 7

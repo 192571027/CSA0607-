@@ -1,0 +1,34 @@
+ALGORITHM JobSequencing(n, ID, Deadline, Profit)
+INPUT:
+    n - number of jobs
+    ID[1..n], Deadline[1..n] (integers >= 1), Profit[1..n]
+OUTPUT:
+    Slot[1..MaxD] - job ID in each slot (EMPTY if unused)
+    TotalProfit   - total profit earned
+BEGIN
+    Order ← indices 1..n SORTED in descending order of Profit
+    MaxD  ← maximum value in Deadline[1..n]
+    FOR s ← 1 TO MaxD DO
+        Slot[s] ← EMPTY
+    END FOR
+    TotalProfit ← 0
+
+    FOR k ← 1 TO n DO
+        j ← Order[k]
+        s ← Deadline[j]                        // latest allowed slot
+        WHILE s >= 1 AND Slot[s] ≠ EMPTY DO    // feasibility check
+            s ← s - 1
+        END WHILE
+        IF s >= 1 THEN                         // a free slot was found
+            Slot[s]     ← ID[j]                // job placement
+            TotalProfit ← TotalProfit + Profit[j]
+        END IF                                 // otherwise job j is rejected
+    END FOR
+
+    RETURN Slot, TotalProfit
+END
+
+// Desk-check: A(2,80) B(1,35) C(2,60) D(3,40) E(1,25)
+//   Order: A, C, D, B, E  ->  Slot = [C, A, D], TotalProfit = 180
+// Challenge: profit of B changed to 70
+//   Order: A, B, C, D, E  ->  Slot = [B, A, D], TotalProfit = 190 (C rejected)

@@ -1,0 +1,89 @@
+// ---------- 5.1 Greedy single-source shortest paths (weights >= 0) ----------
+ALGORITHM GreedyShortestPaths(V, E, W, Source)
+INPUT:
+    V - set of vertices; E - set of directed edges (u, v)
+    W(u, v) >= 0 - weight of each edge; Source - starting vertex
+OUTPUT:
+    Dist[v] - shortest distance from Source to v
+    Pred[v] - previous vertex on a shortest path to v
+BEGIN
+    FOR each vertex v in V DO
+        Dist[v]    ← INFINITY
+        Pred[v]    ← NIL
+        Visited[v] ← FALSE
+    END FOR
+    Dist[Source] ← 0
+
+    FOR count ← 1 TO |V| DO
+        u    ← NIL
+        Best ← INFINITY
+        FOR each vertex v in V DO
+            IF Visited[v] = FALSE AND Dist[v] < Best THEN
+                Best ← Dist[v]
+                u    ← v
+            END IF
+        END FOR
+
+        IF u = NIL THEN
+            BREAK
+        END IF
+        Visited[u] ← TRUE
+
+        FOR each edge (u, v) in E DO
+            IF Visited[v] = FALSE AND Dist[u] + W(u, v) < Dist[v] THEN
+                Dist[v] ← Dist[u] + W(u, v)
+                Pred[v] ← u
+            END IF
+        END FOR
+    END FOR
+
+    RETURN Dist, Pred
+END
+
+// Graph result from A: A=0, B=4, C=6, D=7, E=10 ; path A -> B -> C -> D -> E
+
+// ---------- 5.2 Bellman-Ford (negative weights allowed) ----------
+ALGORITHM BellmanFord(V, E, W, Source)
+BEGIN
+    FOR each vertex v in V DO
+        Dist[v] ← INFINITY
+        Pred[v] ← NIL
+    END FOR
+    Dist[Source] ← 0
+
+    FOR pass ← 1 TO |V| - 1 DO
+        Changed ← FALSE
+        FOR each edge (u, v) in E DO
+            IF Dist[u] ≠ INFINITY AND Dist[u] + W(u, v) < Dist[v] THEN
+                Dist[v] ← Dist[u] + W(u, v)
+                Pred[v] ← u
+                Changed ← TRUE
+            END IF
+        END FOR
+        IF Changed = FALSE THEN
+            BREAK
+        END IF
+    END FOR
+
+    FOR each edge (u, v) in E DO                  // negative-cycle detection
+        IF Dist[u] ≠ INFINITY AND Dist[u] + W(u, v) < Dist[v] THEN
+            RETURN "Negative-weight cycle reachable from Source"
+        END IF
+    END FOR
+
+    RETURN Dist, Pred
+END
+
+// ---------- 5.3 Floyd (all pairs) ----------
+// D(k)[i][j] = length of the shortest path from i to j using only
+//              intermediate vertices from {1, 2, ..., k}
+// D(0)[i][j] = W(i, j); INFINITY if no edge; 0 if i = j
+FOR k ← 1 TO n DO
+    FOR i ← 1 TO n DO
+        FOR j ← 1 TO n DO
+            IF D[i][k] + D[k][j] < D[i][j] THEN
+                D[i][j] ← D[i][k] + D[k][j]
+            END IF
+        END FOR
+    END FOR
+END FOR

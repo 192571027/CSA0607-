@@ -1,0 +1,57 @@
+// State:      OPT[j] = maximum total value using only the first j jobs (sorted by finish time)
+// Recurrence: OPT[j] = max( OPT[j-1], Value[j] + OPT[P[j]] ),  OPT[0] = 0
+// P[j]:       largest index i < j with Finish[i] <= Start[j]  (0 if none)
+
+ALGORITHM EnergyAwareScheduling(n, JobID, Start, Finish, Value)
+INPUT:
+    n - number of jobs
+    JobID[1..n], Start[1..n], Finish[1..n] with Start[j] < Finish[j], Value[1..n] >= 0
+OUTPUT:
+    Selected   - list of selected job IDs in time order
+    TotalValue - maximum total energy-saving value
+BEGIN
+    SORT the jobs in ascending order of Finish, and renumber them 1..n    // stable for ties
+
+    FOR j ← 1 TO n DO
+        P[j] ← 0
+        FOR i ← j - 1 DOWNTO 1 DO
+            IF Finish[i] <= Start[j] THEN       // touching is allowed
+                P[j] ← i
+                BREAK
+            END IF
+        END FOR
+    END FOR
+
+    OPT[0] ← 0
+
+    FOR j ← 1 TO n DO
+        Skip ← OPT[j - 1]
+        Take ← Value[j] + OPT[P[j]]
+        IF Take > Skip THEN
+            OPT[j]    ← Take
+            Choice[j] ← TAKEN
+        ELSE
+            OPT[j]    ← Skip
+            Choice[j] ← SKIPPED
+        END IF
+    END FOR
+
+    TotalValue ← OPT[n]
+
+    Selected ← empty list
+    j ← n
+    WHILE j > 0 DO
+        IF Choice[j] = TAKEN THEN
+            ADD JobID[j] to the front of Selected
+            j ← P[j]
+        ELSE
+            j ← j - 1
+        END IF
+    END WHILE
+
+    RETURN Selected, TotalValue
+END
+
+// Desk-check on J1..J8: Selected = J2, J5, J7, J8 ; TotalValue = 200
+// Adversarial set T1(1-3,30) T2(3-5,30) T3(5-7,30) T4(7-9,30) T5(1-9,100) T6(9-11,40)
+//   -> Selected = T1, T2, T3, T4, T6 ; TotalValue = 160 (T5 skipped at j = 5: 100 < 120)
