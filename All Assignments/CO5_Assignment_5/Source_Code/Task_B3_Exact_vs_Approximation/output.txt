@@ -1,0 +1,21 @@
+Correctness/ratio on random graphs (p=0.25)
+   n   |E|  OPT  2-apx  ratio  greedy  ratio      BF s     B&B s  B&B nodes     apx s
+   8    11    3      6   2.00       3   1.00    0.0000    0.0000         13  0.000001
+  12    19    6     10   1.67       6   1.00    0.0009    0.0001         39  0.000002
+  16    36    8     14   1.75       8   1.00    0.0404    0.0004        247  0.000003
+  20    57   13     18   1.38      13   1.00    1.1281    0.0054        727  0.000004
+  24    69   14     20   1.43      14   1.00       nan    0.0031       1497  0.000004
+Worst observed 2-approx ratio = 2.00 (theoretical bound 2.00)
+Tight instance K_{6,6}: 2-approx = 12, OPT = 6, ratio = 2.00
+
+Scaling (p=0.15)
+   n     B&B s  B&B size  2-apx size   2-apx s
+  30     0.027        18          26  0.000005
+  40     1.360        27          38  0.000010
+  50     5.452        31          46  0.000010
+
+Large graphs (exact infeasible; approximation only, p=0.01)
+     n      |E|  2-apx size  greedy size   2-apx s  greedy s
+   200      199         146           83   0.00405    0.0013
+   500     1306         430          304   0.00009    0.0561
+  1000     5002         934          712   0.00026    0.5035

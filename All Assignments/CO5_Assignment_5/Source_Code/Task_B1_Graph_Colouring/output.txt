@@ -1,0 +1,10 @@
+Graph                  n  chi  greedy   plain nodes  smart nodes  plain s  smart s
+K5                     5    5       5            94           16    0.000    0.000
+C5 (odd cycle)         5    3       3            17           11    0.000    0.000
+C6 (even cycle)        6    2       2             9            8    0.000    0.000
+Petersen              10    3       3            22           16    0.000    0.000
+Australia map          7    3       3            15           11    0.000    0.000
+Random n=20 p=.3      20    4       5           712           27    0.001    0.000
+Random n=30 p=.2      30    4       6          7516           38    0.016    0.000
+Random n=40 p=.15     40    4       4       3726540           75    9.363    0.000
+All colourings validated; K4 with 3 colours and C5 with 2 colours correctly infeasible.

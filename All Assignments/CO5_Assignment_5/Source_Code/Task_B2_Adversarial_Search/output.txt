@@ -1,0 +1,17 @@
+Tic-Tac-Toe (empty board, value must be 0 = draw)
+Algorithm                        value     nodes   time s
+Minimax                              0    549946    0.863
+Alpha-Beta (natural order)           0     18297    0.038
+Alpha-Beta (centre-first order)      0      7275    0.016
+Pruning: 96.7% / 98.7% fewer nodes than minimax
+Perfect-play self-play result: Draw
+Positional tests passed (win / block).
+
+Connect-4 6x7, empty board, X to move
+Depth   Minimax nodes  AlphaBeta nodes  Reduction  Value MM  Value AB
+    1               8                8       0.0%         3         3
+    2              57               21      63.2%         0         0
+    3             400               76      81.0%         3         3
+    4            2801              173      93.8%         0         0
+    5           19608              564      97.1%         3         3
+    6          137257             1249      99.1%         0         0

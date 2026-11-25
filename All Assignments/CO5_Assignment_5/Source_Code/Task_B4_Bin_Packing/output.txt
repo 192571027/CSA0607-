@@ -1,0 +1,35 @@
+Unit tests passed.
+
+Random instances, capacity 100, item sizes in [10,50]; ratio = bins/OPT
+   n seed   LB  OPT    NF    FF    BF   FFD   BFD  B&B nodes  exact s
+  10    0    4    4     4     4     4     4     4          1    0.000
+  10    1    4    4     5     4     4     4     4          1    0.000
+  10    2    3    3     3     3     3     3     3          1    0.000
+  15    0    4    4     5     4     4     4     4          1    0.000
+  15    1    5    5     6     6     6     6     6        178    0.000
+  15    2    4    4     5     5     5     4     4          1    0.000
+  20    0    6    6     7     7     7     6     6          1    0.000
+  20    1    6    6     7     7     7     6     6          1    0.000
+  20    2    7    7     7     7     7     7     7          1    0.000
+  25    0    8   9*    10     9     9     9     9    2000013    1.853
+  25    1    9    9    10     9     9     9     9          1    0.000
+  25    2    8    8     8     8     8     8     8          1    0.000
+  30    0    9    9    11    10    10     9     9          1    0.000
+  30    1    9  10*    12    10    10    10    10    2000016    2.243
+  30    2   10   10    11    10    10    10    10          1    0.000
+  40    0   12   12    14    13    13    12    12          1    0.000
+  40    1   12   12    14    13    13    12    12          1    0.000
+  40    2   13   13    15    14    14    13    13          1    0.000
+(* = exact search hit the node limit; value is best found, an upper bound on OPT)
+
+Mean ratio : NF=1.140  FF=1.063  BF=1.063  FFD=1.011  BFD=1.011
+Worst ratio: NF=1.250  FF=1.250  BF=1.250  FFD=1.200  BFD=1.200
+
+Large instances vs lower bound (n=1000)
+  NF: 353 bins  (LB 294, ratio<= 1.201, 0.0001s)
+  FF: 304 bins  (LB 294, ratio<= 1.034, 0.0031s)
+  BF: 304 bins  (LB 294, ratio<= 1.034, 0.0072s)
+ FFD: 298 bins  (LB 294, ratio<= 1.014, 0.0073s)
+ BFD: 298 bins  (LB 294, ratio<= 1.014, 0.0084s)
+
+Classic hard instance (C=101): FF=11, FFD=7, LB=7, OPT=7
